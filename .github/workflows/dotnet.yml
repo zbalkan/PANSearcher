@@ -43,8 +43,7 @@ jobs:
     - name: Publish
       shell: bash
       run: |
-        tag=$(git describe --tags --abbrev=0)
-        release_name="PANSearcher-$tag-${{ matrix.target }}"
+        release_name="PANSearcher-alpha-${{ matrix.target }}"
         # Build everything
         dotnet publish PANSearcher/PANSearcher.csproj --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
         # Pack files
