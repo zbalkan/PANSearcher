@@ -30,7 +30,6 @@ namespace PANSearcher
         [Argument('t', "Truncate", "Displays PAN numbers truncated.")]
         private static bool Truncate { get; set; }
 
-        // TODO: Run like PANHunt.
         public static void Main(string[] args)
         {
             // enable ctrl+c
@@ -64,7 +63,7 @@ namespace PANSearcher
             // TODO: Use config file to search for extensions.
             files = Directory.EnumerateFiles(SearchBase, "*.txt", options).ToList();
 
-            Console.WriteLine(@$"Found {files.Count} text file(s) under {SearchBase}");
+            Console.WriteLine($"Found {files.Count} text file(s) under {SearchBase}{Environment.NewLine}");
 
             var fileCounter = 0;
             foreach (var file in files)
@@ -109,10 +108,19 @@ namespace PANSearcher
                         }
                     }
                 }
-                if (increment) fileCounter++;
+                if (increment)
+                {
+                    fileCounter++;
+                }
             }
-
-            Console.WriteLine($"Total {fileCounter} files found with at leas one PAN number. To ignore the false positives, you can configure to ignore those folders.");
+            if (fileCounter == 0)
+            {
+                Console.WriteLine($"{Environment.NewLine}No files with PAN number found.");
+            }
+            else
+            {
+                Console.WriteLine($"{Environment.NewLine}Total {fileCounter} files found with at leas one PAN number. To ignore the false positives, you can configure to ignore those folders.");
+            }
         }
 
         /// <summary>
