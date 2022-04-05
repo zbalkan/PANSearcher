@@ -44,8 +44,9 @@ jobs:
       shell: bash
       run: |
         release_name="PANSearcher-alpha-${{ matrix.target }}"
-        # Build everything
-        dotnet publish PANSearcher/PANSearcher.csproj --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
+        # Build no self contained
+        dotnet publish PANSearcher/PANSearcher.csproj --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name" --no-self-contained
+        
         # Pack files
         if [ "${{ matrix.target }}" == "win-x64" ]; then
           # Pack to zip for Windows
@@ -60,4 +61,6 @@ jobs:
       with:
         #tag_name: ${{ steps.tag.outputs.release_tag }}
         tag_name: "alpha"
-        files: "PANSearcher*"
+        files: |
+          "*.tar.gz"
+          "*.zip"
