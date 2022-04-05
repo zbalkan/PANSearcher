@@ -23,5 +23,13 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+  release:
+    runs-on: windows-latest
+    steps:
+    - name: Tag
+      if: startsWith(github.ref, 'refs/heads/release/')
+      run: |
+        git tag "alpha"
+        git push origin "alpha"
     - name: GH Release
       uses: softprops/action-gh-release@v0.1.14
