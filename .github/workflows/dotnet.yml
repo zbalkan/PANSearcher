@@ -36,9 +36,21 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Tag
+    - name: Publish
+      shell: bash
       run: |
-        git tag "alpha"
-        git push origin "alpha"
+        tag=$(git describe --tags --abbrev=0)
+        release_name="PANSearcher-$tag-${{ matrix.target }}"
+        # Build everything
+        dotnet publish PANSearcher/PANSearcher.csproj --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
+        # Pack files
+        if [ "${{ matrix.target }}" == "win-x64" ]; then
+          # Pack to zip for Windows
+          7z a -tzip "${release_name}.zip" "./${release_name}/*"
+        else
+          tar czvf "${release_name}.tar.gz" "$release_name"
+        fi
+        # Delete output directory
+        rm -r "$release_name"
     - name: GH Release
       uses: softprops/action-gh-release@v0.1.14
