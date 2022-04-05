@@ -7,9 +7,22 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
-    runs-on: windows-latest
+  release:
+    name: Release
+    strategy:
+      matrix:
+        kind: ['linux', 'windows', 'macOS']
+        include:
+          - kind: linux
+            os: ubuntu-latest
+            target: linux-x64
+          - kind: windows
+            os: windows-latest
+            target: win-x64
+          - kind: macOS
+            os: macos-latest
+            target: osx-x64
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v3
@@ -24,7 +37,6 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Tag
-      if: startsWith(github.ref, 'refs/heads/release/')
       run: |
         git tag "alpha"
         git push origin "alpha"
