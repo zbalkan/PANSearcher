@@ -8,26 +8,26 @@ namespace PANSearcher
         /// <summary>
         ///     Gets or sets the base search directory.
         /// </summary>
-        [Argument('s', "SEARCH", @"Base directory to search in (default: C:\)")]
+        [Argument('s', "search", @"Base directory to search in (default: C:\)")]
         private static string? SearchBase { get; set; }
 
 
         /// <summary>
         ///     Displays help text.
         /// </summary>
-        [Argument('h', "Help", "Displays help text and exits.")]
+        [Argument('h', "selp", "Displays help text and exits.")]
         private static bool ShowHelpText { get; set; }
 
         /// <summary>
         ///     Displays help text.
         /// </summary>
-        [Argument('u', "Unmask", "Displays PAN numbers unmasked. Ignored when used with 'u' flag. (Default: false)")]
+        [Argument('u', "unmask", "Displays PAN numbers unmasked. Ignored when used with 'u' flag. (Default: false)")]
         private static bool Unmask { get; set; }
 
         /// <summary>
         ///     Displays help text.
         /// </summary>
-        [Argument('t', "Truncate", "Displays PAN numbers truncated.")]
+        [Argument('t', "truncate", "Displays PAN numbers truncated.")]
         private static bool Truncate { get; set; }
 
         public static void Main(string[] args)
