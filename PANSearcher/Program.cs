@@ -22,6 +22,18 @@ namespace PANSearcher
         [Argument('h', "Help", "Displays help text and exits.")]
         private static bool ShowHelpText { get; set; }
 
+        /// <summary>
+        ///     Displays help text.
+        /// </summary>
+        [Argument('u', "Unmask", "Displays PAN numbers unmasked. Ignored when used with 'u' flag. (Default: false)")]
+        private static bool Unmask { get; set; }
+
+        /// <summary>
+        ///     Displays help text.
+        /// </summary>
+        [Argument('t', "Truncate", "Displays PAN numbers truncated.")]
+        private static bool Truncate { get; set; }
+
         // TODO: Run like PANHunt.
         public static void Main(string[] args)
         {
@@ -93,7 +105,11 @@ namespace PANSearcher
 
                             if (cardType != CardType.Invalid && Luhn.Validate(item))
                             {
-                                Console.WriteLine($"FOUND PAN: {PAN.Mask(item)} - {Enum.GetName(typeof(CardType), cardType)} (Path: {FilePath})");
+                                string pan;
+                                if (Truncate) { pan = PAN.Truncate(item); }
+                                else if(Unmask) { pan = item; }
+                                else { pan = PAN.Mask(item); }
+                                Console.WriteLine($"FOUND PAN: {pan} - {Enum.GetName(typeof(CardType), cardType)} (Path: {FilePath})");
                             }
                             else
                             {
