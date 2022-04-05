@@ -22,6 +22,7 @@ namespace PANSearcher
         [Argument('h', "Help", "Displays help text and exits.")]
         private static bool ShowHelpText { get; set; }
 
+        // TODO: Run like PANHunt.
         public static void Main(string[] args)
         {
             // enable ctrl+c
