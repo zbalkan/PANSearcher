@@ -30,6 +30,14 @@ namespace PANSearcher
         [Argument('t', "truncate", "Displays PAN numbers truncated.")]
         private static bool Truncate { get; set; }
 
+        /// <summary>
+        ///     Displays help text.
+        /// </summary>
+        [Argument('c', "config", "configuration file to use")]
+        private static string? ConfigFile { get; set; }
+
+        private static Config? config;
+
         public static void Main(string[] args)
         {
             // enable ctrl+c
@@ -47,9 +55,20 @@ namespace PANSearcher
                 return;
             }
 
+            // First load the application defaults or given config file
+            // Unless specified, config values will be used
+            if (!string.IsNullOrEmpty(ConfigFile))
+            {
+                config = new Config(ConfigFile);
+            }
+            else
+            {
+                config = new Config();
+            }
+
             if (string.IsNullOrEmpty(SearchBase))
             {
-                SearchBase = @"C:\";
+                SearchBase = config.SearchBase;
             }
 
             var files = new List<string>();
@@ -60,8 +79,13 @@ namespace PANSearcher
                 RecurseSubdirectories = true
             };
 
-            // TODO: Use config file to search for extensions.
-            files = Directory.EnumerateFiles(SearchBase, "*.txt", options).ToList();
+            // TODO: More foreach for each type of extensions.
+#pragma warning disable CS8604 // Possible null reference argument.
+            foreach (var textFileExt in config.TextFileExtensions.ToList())
+            {
+                files.AddRange(Directory.EnumerateFiles(SearchBase, $"*{textFileExt}", options));
+            }
+#pragma warning restore CS8604 // Possible null reference argument.
 
             Console.WriteLine($"Found {files.Count} text file(s) under {SearchBase}{Environment.NewLine}");
 
