@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PANSearcher", "PANSearcher\PANSearcher.csproj", "{FA3F2C3B-7A3C-47DE-BE21-AD5EE7E08892}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PANSearcher.Tests", "PANSearcher.Tests\PANSearcher.Tests.csproj", "{5CD9AB63-6390-48D7-9F26-21FB5C21D0C0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA3F2C3B-7A3C-47DE-BE21-AD5EE7E08892}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA3F2C3B-7A3C-47DE-BE21-AD5EE7E08892}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA3F2C3B-7A3C-47DE-BE21-AD5EE7E08892}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA3F2C3B-7A3C-47DE-BE21-AD5EE7E08892}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CD9AB63-6390-48D7-9F26-21FB5C21D0C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CD9AB63-6390-48D7-9F26-21FB5C21D0C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CD9AB63-6390-48D7-9F26-21FB5C21D0C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CD9AB63-6390-48D7-9F26-21FB5C21D0C0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {59067172-4BBD-4A45-9C9D-56E6120B0C24}
+	EndGlobalSection
+EndGlobal
