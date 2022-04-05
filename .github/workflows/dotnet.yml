@@ -54,3 +54,5 @@ jobs:
         rm -r "$release_name"
     - name: GH Release
       uses: softprops/action-gh-release@v0.1.14
+      with:
+          files: "PANSearcher*"
