@@ -1,4 +1,5 @@
 # PANSearcher
+![Build](https://github.com/zbalkan/PANSearcher/actions/workflows/dotnet.yml/badge.svg)
 
 ## Description
 
