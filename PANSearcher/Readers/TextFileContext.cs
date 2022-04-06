@@ -54,13 +54,7 @@ namespace PANSearcher.Readers
 
                         foreach (var item in found)
                         {
-                            var cardType = PAN.GetCardType(item);
-                            if (cardType == CardType.Invalid)
-                            {
-                                continue;
-                            }
-
-                            if (cardType != CardType.Invalid && Luhn.Validate(item))
+                            if (PAN.Validate(item, out var cardType))
                             {
                                 var pan = PAN.Format(item, displayType);
                                 Console.WriteLine($"FOUND PAN: {pan} - {Enum.GetName(typeof(CardType), cardType)} (Path: {file})");

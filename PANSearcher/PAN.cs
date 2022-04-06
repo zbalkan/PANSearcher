@@ -8,6 +8,12 @@ namespace PANSearcher
         private static readonly Regex visa = new(@"(?:\D|^)(4[0-9]{3}(?:\ |\-|)[0-9]{4}(?:\ |\-|)[0-9]{4}(?:\ |\-|)[0-9]{4})(?:\D|$)", RegexOptions.Compiled);
         private static readonly Regex amex = new(@"(?:\D|^)((?:34|37)[0-9]{2}(?:\ |\-|)[0-9]{6}(?:\ |\-|)[0-9]{5})(?:\D|$)", RegexOptions.Compiled);
 
+        public static bool Validate(string cardNumber, out CardType cardType)
+        {
+            cardType = GetCardType(cardNumber);
+            return cardType != CardType.Invalid && Luhn.Validate(cardNumber);
+        }
+
         public static CardType GetCardType(string cardNumber)
         {
             if (mastercard.IsMatch(cardNumber))
@@ -31,7 +37,7 @@ namespace PANSearcher
         {
             var list = new List<string>();
             var matches1 = mastercard.Matches(line);
-            var matches2= visa.Matches(line);
+            var matches2 = visa.Matches(line);
             var matches3 = amex.Matches(line);
 
             list.AddRange(matches1.Select(item => GetNumbers(item.Value)).ToList());
