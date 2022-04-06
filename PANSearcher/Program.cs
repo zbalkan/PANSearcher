@@ -21,7 +21,7 @@ namespace PANSearcher
         /// <summary>
         ///     Displays help text.
         /// </summary>
-        [Argument('u', "unmask", "Displays PAN numbers unmasked. Ignored when used with 't' flag. (Default: false)")]
+        [Argument('u', "unmask", "Displays PAN numbers unmasked. Ignored when used with 't' flag.")]
         private static bool Unmask { get; set; }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace PANSearcher
         /// <summary>
         ///     Displays help text.
         /// </summary>
-        [Argument('c', "config", "configuration file to use")]
+        [Argument('c', "config", "Configuration file to use")]
         private static string? ConfigFile { get; set; }
 
         private static Config? config;
@@ -43,7 +43,7 @@ namespace PANSearcher
             // enable ctrl+c
             Console.CancelKeyPress += (o, e) =>
             {
-                Console.WriteLine("Operation cancelled by user.");
+                Console.WriteLine($"{Environment.NewLine}Operation cancelled by user.");
                 Environment.Exit(1);
             };
 
@@ -70,8 +70,11 @@ namespace PANSearcher
             {
                 SearchBase = config.SearchBase;
             }
+            Console.WriteLine($"Started PAN number search. Root path: {SearchBase}{Environment.NewLine}");
 
             await Search();
+
+            Console.WriteLine($"{Environment.NewLine}PAN search completed.");
         }
 
         private static async Task Search()
