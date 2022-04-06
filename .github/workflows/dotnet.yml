@@ -116,6 +116,9 @@ jobs:
         # Build self contained & trimmed
         dotnet publish PANSearcher/PANSearcher.csproj --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name" --self-contained true -p:PublishTrimmed=true -p:PublishSingleFile=true 
         
+        # Remove PDB files
+        rm ./${release_name}/*.pdb
+
         # Pack files
         if [ "${{ matrix.target }}" == "win-x64" ]; then
           # Pack to zip for Windows
