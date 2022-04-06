@@ -10,27 +10,27 @@ Although it is written from scratch, it is using directly (ripping off) some par
 ## Usage
 
 ```
-usage: PANSearcher [-h] [-s SEARCH] [-x EXCLUDE] [-t TEXTFILES] [-z ZIPFILES] [-e SPECIALFILES] [-m MAILFILES] [-l OTHERFILES] [-o OUTFILE] [-u] [-t]
-
-PANSearcher: search directories and sub directories for documents containing PANs.
-
-optional arguments:
-  -h, --help       show this help message and exit
-  -s search        base directory to search in (default: C:\)
-  -x exclude       directories to exclude from the search (default: C:\Windows,C:\Program Files,C:\Program Files (x86))
-  -t TEXTFILES     text file extensions to search (default: .doc,.xls,.xml,.txt,.csv) [NOT IMPLEMENTED]
-  -z ZIPFILES      zip file extensions to search (default: .docx,.xlsx,.zip) [NOT IMPLEMENTED]
-  -e SPECIALFILES  special file extensions to search (default: .msg) [NOT IMPLEMENTED]
-  -m MAILFILES     email file extensions to search (default: .pst) [NOT IMPLEMENTED]
-  -l OTHERFILES    other file extensions to list (default: .ost,.accdb,.mdb) [NOT IMPLEMENTED]
-  -o OUTFILE       output file name for PAN report (default: panhunt_YYYY-MM-DD-HHMMSS.txt) [NOT IMPLEMENTED]
-  -C config        configuration file to use
-  -X EXCLUDEPAN    the PAN to exclude from search [NOT IMPLEMENTED]
-  -u               unmask PANs in output (default: False)
-  -t               truncate PANs in output (default:False)
-  -q               Quiet  [NOT IMPLEMENTED]
-  -f               Format report. Acceptable values: txt (default), xml, json.  [NOT IMPLEMENTED]
+usage: PANSearcher [ARGUMENTS]
 ```
+### Arguments
+
+| Short | Long | Description | Default Value | Status |
+|-------|------|-------------|---------------|--------|
+| -h | --help | Show this help message and exit | | IMPLEMENTED |
+| -s | --search | Base directory to search in | Windows: C:\, Others: / | IMPLEMENTED |
+| -x | --exclude | Directories to exclude from the search | Windows: C:\Windows,C:\Program Files,C:\Program Files (x86). Others: /mnt | IMPLEMENTED |
+| -t | --TEXTFILES | Text file extensions to search | .doc,.xls,.xml,.txt,.csv | NOT IMPLEMENTED |
+| -z | --ZIPFILES | zip file extensions to search | .docx,.xlsx,.zip | NOT IMPLEMENTED |
+| -e | --SPECIALFILES | Special file extensions to search | .msg | NOT IMPLEMENTED |
+| -m | --MAILFILES | Email file extensions to search | .pst | NOT IMPLEMENTED |
+| -l | --OTHERFILES | Other file extensions to list | .ost,.accdb,.mdb | NOT IMPLEMENTED |
+| -o | --OUTFILE | Output file name for PAN report | panhunt_YYYY-MM-DD-HHMMSS.txt | NOT IMPLEMENTED |
+| -C | --config | configuration file to use | | IMPLEMENTED |
+| -X | --EXCLUDEPAN | The PAN to exclude from search |   | NOT IMPLEMENTED |
+| -u | --unmask | Unmask PANs in output | | IMPLEMENTED |
+| -t | --truncate | Truncate PANs in output | | IMPLEMENTED |
+| -q | --quiet | Quiet  | | NOT IMPLEMENTED |
+| -f | --format | Format report. Acceptable values: txt, xml, json. | txt  | NOT IMPLEMENTED |
 
 
 ## Dependencies
