@@ -114,7 +114,7 @@ jobs:
       run: |
         release_name="PANSearcher-alpha-${{ matrix.target }}-self-contained"
         # Build self contained & trimmed
-        dotnet publish PANSearcher/PANSearcher.csproj --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name" --self-contained true -p:PublishTrimmed=true
+        dotnet publish PANSearcher/PANSearcher.csproj --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name" --self-contained true -p:PublishTrimmed=true -p:PublishSingleFile=true 
         
         # Pack files
         if [ "${{ matrix.target }}" == "win-x64" ]; then
