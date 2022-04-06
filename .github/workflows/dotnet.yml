@@ -72,14 +72,6 @@ jobs:
         fi
         # Delete output directory
         rm -r "$release_name"
-    - name: GH Release
-      uses: softprops/action-gh-release@v0.1.14
-      with:
-        #tag_name: ${{ steps.tag.outputs.release_tag }}
-        tag_name: "alpha"
-        files: |
-          "*.tar.gz"
-          "*.zip"
     - name: CycloneDX .NET Generate XML SBOM
       uses: CycloneDX/gh-dotnet-generate-sbom@v1.0.1
       with:
@@ -92,4 +84,12 @@ jobs:
        path: ./PANHunter.sln
        json: true
        github-bearer-token: ${{ secrets.GITHUB_TOKEN }}
-       
+    - name: GH Release
+      uses: softprops/action-gh-release@v0.1.14
+      with:
+        #tag_name: ${{ steps.tag.outputs.release_tag }}
+        tag_name: "alpha"
+        files: |
+          "*.tar.gz"
+          "*.zip"
+          "bom.*"
