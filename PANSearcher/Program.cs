@@ -38,7 +38,7 @@ namespace PANSearcher
 
         private static Config? config;
 
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             // enable ctrl+c
             Console.CancelKeyPress += (o, e) =>
@@ -71,10 +71,10 @@ namespace PANSearcher
                 SearchBase = config.SearchBase;
             }
 
-            Search();
+            await Search();
         }
 
-        private static async void Search()
+        private static async Task Search()
         {
             var factory = new TaskFactory();
 
@@ -87,6 +87,7 @@ namespace PANSearcher
 
             Task.WaitAll(textFileContextTask);
         }
+
         private static DisplayType DisplayType
         {
             get
