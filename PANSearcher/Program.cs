@@ -1,4 +1,5 @@
-﻿using PANSearcher.Context;
+﻿using System.Diagnostics;
+using PANSearcher.Context;
 using Utility.CommandLine;
 
 namespace PANSearcher
@@ -71,10 +72,11 @@ namespace PANSearcher
                 SearchBase = config.SearchBase;
             }
             Console.WriteLine($"Started PAN number search. Root path: {SearchBase}{Environment.NewLine}");
-
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             await Search();
-
-            Console.WriteLine($"{Environment.NewLine}PAN search completed.");
+            stopwatch.Stop();
+            Console.WriteLine($"{Environment.NewLine}PAN search completed in {stopwatch.Elapsed}.");
         }
 
         private static async Task Search()
