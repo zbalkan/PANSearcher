@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Diagnostics;
 
-namespace PANSearcher.Readers
+namespace PANSearcher.Context
 {
     public class TextFileContext
     {
