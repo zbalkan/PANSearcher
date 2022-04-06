@@ -64,3 +64,16 @@ jobs:
         files: |
           "*.tar.gz"
           "*.zip"
+    - name: CycloneDX .NET Generate XML SBOM
+      uses: CycloneDX/gh-dotnet-generate-sbom@v1.0.1
+      with:
+       path: ./PANHunter.sln
+       github-bearer-token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: CycloneDX .NET Generate JSON SBOM
+      uses: CycloneDX/gh-dotnet-generate-sbom@master
+      with:
+       path: ./PANHunter.sln
+       json: true
+       github-bearer-token: ${{ secrets.GITHUB_TOKEN }}
+       
