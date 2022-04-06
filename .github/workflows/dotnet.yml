@@ -40,12 +40,28 @@ jobs:
     #  id: tag
     #  run: |
     #    echo "::set-output name=release_tag::UserBuild_$(date +"%Y.%m.%d_%H-%M")"
-    - name: Publish
+    - name: Publish framework dependent
       shell: bash
       run: |
         release_name="PANSearcher-alpha-${{ matrix.target }}"
         # Build no self contained
         dotnet publish PANSearcher/PANSearcher.csproj --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name" --no-self-contained
+        
+        # Pack files
+        if [ "${{ matrix.target }}" == "win-x64" ]; then
+          # Pack to zip for Windows
+          7z a -tzip "${release_name}.zip" "./${release_name}/*"
+        else
+          tar czvf "${release_name}.tar.gz" "$release_name"
+        fi
+        # Delete output directory
+        rm -r "$release_name"
+    - name: Publish framework independent
+      shell: bash
+      run: |
+        release_name="PANSearcher-alpha-${{ matrix.target }}-self-contained"
+        # Build self contained & trimmed
+        dotnet publish PANSearcher/PANSearcher.csproj --framework net6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name" --self-contained true -p:PublishTrimmed=true
         
         # Pack files
         if [ "${{ matrix.target }}" == "win-x64" ]; then
