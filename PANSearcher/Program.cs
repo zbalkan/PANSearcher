@@ -12,6 +12,11 @@ namespace PANSearcher
         [Argument('s', "search", @"Base directory to search in (default: C:\)")]
         private static string? SearchBase { get; set; }
 
+        /// <summary>
+        ///     Displays help text.
+        /// </summary>
+        [Argument('x', "exclude", "Paths to exclude from search.")]
+        private static string[]? ExcludedPaths { get; set; }
 
         /// <summary>
         ///     Displays help text.
@@ -56,6 +61,18 @@ namespace PANSearcher
                 return;
             }
 
+            LoadConfig();
+
+            Console.WriteLine($"Started PAN number search. Root path: {SearchBase}{Environment.NewLine}");
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            await Search();
+            stopwatch.Stop();
+            Console.WriteLine($"{Environment.NewLine}PAN search completed in {stopwatch.Elapsed}.");
+        }
+
+        private static void LoadConfig()
+        {
             // First load the application defaults or given config file
             // Unless specified, config values will be used
             if (!string.IsNullOrEmpty(ConfigFile))
@@ -71,12 +88,11 @@ namespace PANSearcher
             {
                 SearchBase = config.SearchBase;
             }
-            Console.WriteLine($"Started PAN number search. Root path: {SearchBase}{Environment.NewLine}");
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-            await Search();
-            stopwatch.Stop();
-            Console.WriteLine($"{Environment.NewLine}PAN search completed in {stopwatch.Elapsed}.");
+
+            if (ExcludedPaths == null)
+            {
+                ExcludedPaths = config.ExcludeFolders as string[];
+            }
         }
 
         private static async Task Search()
@@ -86,7 +102,7 @@ namespace PANSearcher
 #pragma warning disable CS8604 // Possible null reference argument.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             // TODO: A task for each type of files.
-            var textFileContextTask = factory.StartNew(async () => await new TextFileContext(config.TextFileExtensions).Search(SearchBase, DisplayType));
+            var textFileContextTask = factory.StartNew(async () => await new TextFileContext(config.TextFileExtensions).Search(SearchBase, ExcludedPaths, DisplayType));
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8604 // Possible null reference argument.
 

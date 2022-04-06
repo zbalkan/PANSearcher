@@ -17,7 +17,7 @@ namespace PANSearcher.Context
             _extensions = extensions.ToList();
         }
 
-        public async Task Search(string searchBase, DisplayType displayType = DisplayType.Masked)
+        public async Task Search(string searchBase, IEnumerable<string> excluded, DisplayType displayType = DisplayType.Masked)
         {
             var options = new EnumerationOptions
             {
@@ -29,7 +29,7 @@ namespace PANSearcher.Context
             foreach (var textFileExt in _extensions)
             {
                 Console.WriteLine($"Started searching for files with '*{textFileExt}' extensions");
-                foreach (var file in Directory.EnumerateFiles(searchBase, $"*{textFileExt}", options))
+                foreach (var file in Directory.EnumerateFiles(searchBase, $"*{textFileExt}", options).Where(f => !IsExcluded(f, excluded)))
                 {
                     IEnumerable<string>? lines = null;
 
@@ -77,6 +77,18 @@ namespace PANSearcher.Context
             {
                 Console.WriteLine($"{Environment.NewLine}Total {fileCounter} files found with at least one PAN number. To ignore the false positives, you can configure to ignore those folders.");
             }
+        }
+
+        private static bool IsExcluded(string f, IEnumerable<string> excluded)
+        {
+            foreach (var excludedPath in excluded)
+            {
+                if (f.StartsWith(excludedPath))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
