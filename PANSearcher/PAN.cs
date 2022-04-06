@@ -41,7 +41,14 @@ namespace PANSearcher
             return list.AsReadOnly();
         }
 
-        public static string Mask(string cardNumber)
+        public static string Format(string PANNumber, DisplayType displayType) => displayType switch
+        {
+            DisplayType.Unmasked => PANNumber,
+            DisplayType.Truncated => Truncate(PANNumber),
+            _ => Mask(PANNumber),
+        };
+
+        private static string Mask(string cardNumber)
         {
             var first = cardNumber.Substring(0, 4);
             var middle = cardNumber.Substring(4, cardNumber.Length - 9);
@@ -64,7 +71,7 @@ namespace PANSearcher
             return string.Concat(first, new string(maskedArray), last);
         }
 
-        public static string Truncate(string cardNumber)
+        private static string Truncate(string cardNumber)
         {
             var first = cardNumber.Substring(0, 4);
             var last = cardNumber.Substring(cardNumber.Length - 6, 5);

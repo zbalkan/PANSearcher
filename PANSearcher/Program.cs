@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using PANSearcher.Readers;
 using Utility.CommandLine;
 
 namespace PANSearcher
@@ -15,13 +15,13 @@ namespace PANSearcher
         /// <summary>
         ///     Displays help text.
         /// </summary>
-        [Argument('h', "selp", "Displays help text and exits.")]
+        [Argument('h', "help", "Displays help text and exits.")]
         private static bool ShowHelpText { get; set; }
 
         /// <summary>
         ///     Displays help text.
         /// </summary>
-        [Argument('u', "unmask", "Displays PAN numbers unmasked. Ignored when used with 'u' flag. (Default: false)")]
+        [Argument('u', "unmask", "Displays PAN numbers unmasked. Ignored when used with 't' flag. (Default: false)")]
         private static bool Unmask { get; set; }
 
         /// <summary>
@@ -71,79 +71,31 @@ namespace PANSearcher
                 SearchBase = config.SearchBase;
             }
 
-            var files = new List<string>();
-
-            var options = new EnumerationOptions
-            {
-                IgnoreInaccessible = true,
-                RecurseSubdirectories = true
-            };
+            var displayType = DisplayType;
 
             // TODO: More foreach for each type of extensions.
 #pragma warning disable CS8604 // Possible null reference argument.
-            foreach (var textFileExt in config.TextFileExtensions.ToList())
-            {
-                files.AddRange(Directory.EnumerateFiles(SearchBase, $"*{textFileExt}", options));
-            }
+            var textFileReader = new TextFileContext(config.TextFileExtensions);
+            textFileReader.Search(SearchBase, displayType);
 #pragma warning restore CS8604 // Possible null reference argument.
+        }
 
-            Console.WriteLine($"Found {files.Count} text file(s) under {SearchBase}{Environment.NewLine}");
-
-            var fileCounter = 0;
-            foreach (var file in files)
+        private static DisplayType DisplayType
+        {
+            get
             {
-                IEnumerable<string>? lines = null;
-
-                try
+                if (Truncate)
                 {
-                    lines = File.ReadLines(file, System.Text.Encoding.UTF8);
+                    return DisplayType.Truncated;
                 }
-                catch (Exception e)
+                else if (Unmask)
                 {
-                    Debug.WriteLine(e.Message);
-                    continue;
+                    return DisplayType.Unmasked;
                 }
-
-                var increment = false;
-                foreach (var line in lines)
+                else
                 {
-                    var found = PAN.ParseLine(line);
-                    if (found.Count == 0)
-                    {
-                        continue;
-                    }
-
-                    foreach (var item in found)
-                    {
-                        var cardType = PAN.GetCardType(item);
-                        if (cardType == CardType.Invalid)
-                        {
-                            continue;
-                        }
-
-                        if (cardType != CardType.Invalid && Luhn.Validate(item))
-                        {
-                            string pan;
-                            if (Truncate) { pan = PAN.Truncate(item); }
-                            else if (Unmask) { pan = item; }
-                            else { pan = PAN.Mask(item); }
-                            Console.WriteLine($"FOUND PAN: {pan} - {Enum.GetName(typeof(CardType), cardType)} (Path: {file})");
-                            increment = true;
-                        }
-                    }
+                    return DisplayType.Masked;
                 }
-                if (increment)
-                {
-                    fileCounter++;
-                }
-            }
-            if (fileCounter == 0)
-            {
-                Console.WriteLine($"{Environment.NewLine}No files with PAN number found.");
-            }
-            else
-            {
-                Console.WriteLine($"{Environment.NewLine}Total {fileCounter} files found with at leas one PAN number. To ignore the false positives, you can configure to ignore those folders.");
             }
         }
 
@@ -154,7 +106,6 @@ namespace PANSearcher
         /// <param name="type">The type for which the colloquial name should be created.</param>
         /// <returns>A "pretty" string representation of the provided Type.</returns>
         public static string ToColloquialString(this Type type) => (!type.IsGenericType ? type.Name : type.Name.Split('`')[0] + "<" + string.Join(", ", type.GetGenericArguments().Select(a => a.ToColloquialString())) + ">");
-
 
         /// <summary>
         ///     Show help for arguments.
