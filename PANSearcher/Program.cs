@@ -71,15 +71,22 @@ namespace PANSearcher
                 SearchBase = config.SearchBase;
             }
 
-            var displayType = DisplayType;
-
-            // TODO: More foreach for each type of extensions.
-#pragma warning disable CS8604 // Possible null reference argument.
-            var textFileReader = new TextFileContext(config.TextFileExtensions);
-            textFileReader.Search(SearchBase, displayType);
-#pragma warning restore CS8604 // Possible null reference argument.
+            Search();
         }
 
+        private static async void Search()
+        {
+            var factory = new TaskFactory();
+
+#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            // TODO: A task for each type of files.
+            var textFileContextTask = factory.StartNew(async () => await new TextFileContext(config.TextFileExtensions).Search(SearchBase, DisplayType));
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8604 // Possible null reference argument.
+
+            Task.WaitAll(textFileContextTask);
+        }
         private static DisplayType DisplayType
         {
             get

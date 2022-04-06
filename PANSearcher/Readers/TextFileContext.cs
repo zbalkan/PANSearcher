@@ -17,7 +17,7 @@ namespace PANSearcher.Readers
             _extensions = extensions.ToList();
         }
 
-        public void Search(string searchBase, DisplayType displayType = DisplayType.Masked)
+        public async Task Search(string searchBase, DisplayType displayType = DisplayType.Masked)
         {
             var options = new EnumerationOptions
             {
@@ -28,6 +28,7 @@ namespace PANSearcher.Readers
 
             foreach (var textFileExt in _extensions)
             {
+                Console.WriteLine($"Started searching for files with '*{textFileExt}' extensions");
                 foreach (var file in Directory.EnumerateFiles(searchBase, $"*{textFileExt}", options))
                 {
                     IEnumerable<string>? lines = null;
