@@ -14,7 +14,7 @@ namespace PANSearcher
             return cardType != CardType.Invalid && Luhn.Validate(cardNumber);
         }
 
-        public static CardType GetCardType(string cardNumber)
+        private static CardType GetCardType(string cardNumber)
         {
             if (mastercard.IsMatch(cardNumber))
             {
