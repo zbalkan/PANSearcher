@@ -7,6 +7,54 @@ on:
     branches: [ master ]
 
 jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'csharp' ]
+        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
+        # Learn more about CodeQL language support at https://git.io/codeql-language-support
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+        # If you wish to specify custom queries, you can do so here or in a config file.
+        # By default, queries listed here will override any specified in a config file.
+        # Prefix the list here with "+" to use these queries and those in the config file.
+        # queries: ./path/to/local/query, your-org/your-repo/queries@main
+
+    # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
+    # If this step fails, then you should remove it and run the build manually (see below)
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v2
+
+    # ℹ️ Command-line programs to run using the OS shell.
+    # 📚 https://git.io/JvXDl
+
+    # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
+    #    and modify them (or add more) to build your code if your project
+    #    uses a compiled language
+
+    #- run: |
+    #   make bootstrap
+    #   make release
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+      
   release:
     name: Release
     strategy:
@@ -30,12 +78,16 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
+        
     - name: Restore dependencies
       run: dotnet restore
+      
     - name: Build
       run: dotnet build --no-restore
+      
     - name: Test
       run: dotnet test --no-build --verbosity normal
+      
     #- name: Generate release tag
     #  id: tag
     #  run: |
@@ -54,6 +106,7 @@ jobs:
         else
           tar czvf "${release_name}.tar.gz" "$release_name"
         fi
+        
         # Delete output directory
         rm -r "$release_name"
     - name: Publish framework independent
@@ -70,16 +123,10 @@ jobs:
         else
           tar czvf "${release_name}.tar.gz" "$release_name"
         fi
+        
         # Delete output directory
         rm -r "$release_name"
-    - name: GH Release
-      uses: softprops/action-gh-release@v0.1.14
-      with:
-        #tag_name: ${{ steps.tag.outputs.release_tag }}
-        tag_name: "alpha"
-        files: |
-          "*.tar.gz"
-          "*.zip"
+        
     - name: CycloneDX .NET Generate XML SBOM
       uses: CycloneDX/gh-dotnet-generate-sbom@v1.0.1
       with:
@@ -93,3 +140,22 @@ jobs:
        json: true
        github-bearer-token: ${{ secrets.GITHUB_TOKEN }}
        
+    - name: Enumerate root folder
+      shell: bash
+      run: ls
+
+    - name: Enumerate folder structure
+      shell: bash
+      run: ls -R
+
+    - name: GH Release
+      uses: softprops/action-gh-release@v0.1.14
+      with:
+        #tag_name: ${{ steps.tag.outputs.release_tag }}
+        tag_name: "alpha"
+        files: |
+          *.zip
+          *.tar.gz
+          bom.*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
