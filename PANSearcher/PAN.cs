@@ -47,10 +47,10 @@ namespace PANSearcher
             return list.AsReadOnly();
         }
 
-        public static string Format(string PANNumber, DisplayType displayType) => displayType switch
+        public static string Format(string PANNumber, PANDisplayMode displayMode) => displayMode switch
         {
-            DisplayType.Unmasked => PANNumber,
-            DisplayType.Truncated => Truncate(PANNumber),
+            PANDisplayMode.Unmasked => PANNumber,
+            PANDisplayMode.Truncated => Truncate(PANNumber),
             _ => Mask(PANNumber),
         };
 

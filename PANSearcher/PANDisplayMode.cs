@@ -1,6 +1,6 @@
 ﻿namespace PANSearcher
 {
-    public enum DisplayType
+    public enum PANDisplayMode
     {
         Masked,
         Unmasked,

@@ -4,7 +4,7 @@ namespace PANSearcher.Context
 {
     public class SearchEngine
     {
-        public static void Search(string searchBase, IEnumerable<string> excluded, IEnumerable<string> extensions, IContext context, DisplayType displayType = DisplayType.Masked)
+        public static void Search(string searchBase, IEnumerable<string> excluded, IEnumerable<string> extensions, IContext context, PANDisplayMode displayMode = PANDisplayMode.Masked)
         {
             var options = new EnumerationOptions
             {
@@ -49,7 +49,7 @@ namespace PANSearcher.Context
                         {
                             if (PAN.Validate(item, out var cardType))
                             {
-                                var pan = PAN.Format(item, displayType);
+                                var pan = PAN.Format(item, displayMode);
                                 Console.WriteLine($"FOUND PAN: {pan} - {Enum.GetName(typeof(CardType), cardType)} (Path: {file})");
                                 increment = true;
                             }

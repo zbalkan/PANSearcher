@@ -103,28 +103,28 @@ namespace PANSearcher
 #pragma warning disable CS8604 // Possible null reference argument.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             // TODO: A task for each type of files.
-            var textFileContextTask = factory.StartNew(() => SearchEngine.Search(SearchBase, ExcludedPaths, config.TextFileExtensions, new TextFileContext(), DisplayType));
+            var textFileContextTask = factory.StartNew(() => SearchEngine.Search(SearchBase, ExcludedPaths, config.TextFileExtensions, new TextFileContext(), DisplayMode));
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8604 // Possible null reference argument.
 
             Task.WaitAll(textFileContextTask);
         }
 
-        private static DisplayType DisplayType
+        private static PANDisplayMode DisplayMode
         {
             get
             {
                 if (Truncate)
                 {
-                    return DisplayType.Truncated;
+                    return PANDisplayMode.Truncated;
                 }
                 else if (Unmask)
                 {
-                    return DisplayType.Unmasked;
+                    return PANDisplayMode.Unmasked;
                 }
                 else
                 {
-                    return DisplayType.Masked;
+                    return PANDisplayMode.Masked;
                 }
             }
         }
