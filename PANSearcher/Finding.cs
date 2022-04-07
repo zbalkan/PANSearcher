@@ -23,7 +23,7 @@ namespace PANSearcher
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("FOUND PANs: ")
+            _ = sb.Append("FOUND PANs: ")
                 .Append(GetFileInfo().FullName)
                 .Append(" (")
                 .Append(GetFileInfo().Length / 1024)
@@ -33,7 +33,7 @@ namespace PANSearcher
 
             foreach (var record in Records)
             {
-                sb.Append('\t').AppendLine(record.ToString());
+                _ = sb.Append('\t').AppendLine(record.ToString());
             }
 
             return sb.ToString();

@@ -103,7 +103,12 @@ namespace PANSearcher
 #pragma warning disable CS8604 // Possible null reference argument.
             var command = Path.Combine(Process.GetCurrentProcess().ProcessName, args);
             var reportText = report.Prepare(SearchBase, string.Join(' ', ExcludedPaths), command);
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            var path = Path.Combine(home, "PANSearcher");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
 
             File.WriteAllText(Path.Combine(path, OutFile.Replace("%s", DateTime.Now.ToString("yyyy-MM-dd-HHmmss"))), reportText);
 #pragma warning restore CS8604 // Possible null reference argument.
