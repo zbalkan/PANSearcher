@@ -36,18 +36,18 @@ usage: PANSearcher [ARGUMENTS]
 | -X | --EXCLUDEPAN | The PAN to exclude from search | | NOT IMPLEMENTED |
 | -u | --unmask | Unmask PANs in output | | IMPLEMENTED |
 | -t | --truncate | Truncate PANs in output | | IMPLEMENTED |
-| -q | --quiet | Quiet  | | NOT IMPLEMENTED |
 | -f | --format | Format report. Acceptable values: `txt, xml, json`. | `txt`  | NOT IMPLEMENTED |
-| -v | --verbose | Verbose output. | | NOT IMPLEMENTED |
+| -v | --verbose | Verbose output. | | IMPLEMENTED |
+| -q | --quiet | Quiet  | | IMPLEMENTED |
 
 ## TODO
 - [x] Get rid of interactive UI and use SYSTEM drive as default search root
 - [x] Use the configuration that PANHunt presents
 - [ ] Use the same flags with PANHunt
-- [ ] Add Quiet option
+- [x] Add Quiet option
 - [ ] Add report format option
-- [ ] Add verbose option
-- [ ] Add Word, Excel, PST and MSG file reading capability
+- [x] Add verbose option
+- [ ] Add WZip file, PST and MSG file reading capability
 - [ ] Add advanced logging options such as json, syslog, event log formats pushing to a syslog server
 - [ ] Add email alerts
 - [ ] Use Spectre.Console for better UI
