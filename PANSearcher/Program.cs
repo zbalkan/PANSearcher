@@ -13,13 +13,19 @@ namespace PANSearcher
         private static string? SearchBase { get; set; }
 
         /// <summary>
-        ///     Displays help text.
+        ///     Paths to exclude from search.
         /// </summary>
         [Argument('x', "exclude", "Paths to exclude from search.")]
         private static string[]? ExcludedPaths { get; set; }
 
         /// <summary>
-        ///     Displays help text.
+        ///     Text file extensions to search.
+        /// </summary>
+        [Argument('t', "textfiles", "Text file extensions to search.")]
+        private static string[]? TextFileExtensions { get; set; }
+
+        /// <summary>
+        ///     Displays help text and exits.
         /// </summary>
         [Argument('h', "help", "Displays help text and exits.")]
         private static bool ShowHelpText { get; set; }
@@ -80,6 +86,11 @@ namespace PANSearcher
                 SearchBase = Settings.Instance.SearchBase;
             }
 
+            if (TextFileExtensions == null)
+            {
+                TextFileExtensions = Settings.Instance.TextFileExtensions as string[];
+            }
+
             if (ExcludedPaths == null)
             {
                 ExcludedPaths = Settings.Instance.ExcludeFolders as string[];
@@ -92,10 +103,8 @@ namespace PANSearcher
             var engine = new SearchEngine();
 
 #pragma warning disable CS8604 // Possible null reference argument.
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             // TODO: A task for each type of files.
-            var textFileContextTask = factory.StartNew(() => SearchEngine.Search(SearchBase, ExcludedPaths, Settings.Instance.TextFileExtensions, new TextFileContext(), DisplayMode));
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            var textFileContextTask = factory.StartNew(() => SearchEngine.Search(SearchBase, ExcludedPaths, TextFileExtensions, new TextFileContext(), DisplayMode));
 #pragma warning restore CS8604 // Possible null reference argument.
 
             Task.WaitAll(textFileContextTask);
