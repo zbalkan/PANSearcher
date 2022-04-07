@@ -26,7 +26,7 @@ usage: PANSearcher [ARGUMENTS]
 | -h | --help | Show this help message and exit | | IMPLEMENTED |
 | -s | --search | Base directory to search in | Windows: `C:\`, Others: `/` | IMPLEMENTED |
 | -x | --exclude | Directories to exclude from the search | Windows: `C:\Windows,C:\Program Files,C:\Program Files (x86)`. Others: `/mnt` | IMPLEMENTED |
-| -t | --TEXTFILES | Text file extensions to search | `.doc,.xls,.xml,.txt,.csv` | NOT IMPLEMENTED |
+| -t | --textfiles | Text file extensions to search | `.doc,.xls,.xml,.txt,.csv` | IMPLEMENTED |
 | -z | --ZIPFILES | zip file extensions to search | `.docx,.xlsx,.zip` | NOT IMPLEMENTED |
 | -e | --SPECIALFILES | Special file extensions to search | `.msg` | NOT IMPLEMENTED |
 | -m | --MAILFILES | Email file extensions to search | `.pst` | NOT IMPLEMENTED |
@@ -45,7 +45,7 @@ usage: PANSearcher [ARGUMENTS]
 - [x] Use the configuration that PANHunt presents
 - [ ] Use the same flags with PANHunt
 - [ ] Add Quiet option
-- [ ] Add report ormat option
+- [ ] Add report format option
 - [ ] Add verbose option
 - [ ] Add Word, Excel, PST and MSG file reading capability
 - [ ] Add advanced logging options such as json, syslog, event log formats pushing to a syslog server
