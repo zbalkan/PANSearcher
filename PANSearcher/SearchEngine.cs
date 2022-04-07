@@ -15,9 +15,11 @@ namespace PANSearcher.Context
 
             foreach (var textFileExt in extensions)
             {
-                Console.WriteLine($"Started searching for files with '*{textFileExt}' extensions");
+                Print.Output($"Started searching for files with '*{textFileExt}' extensions");
                 foreach (var file in Directory.EnumerateFiles(searchBase, $"*{textFileExt}", options).Where(f => !IsExcluded(f, excluded)))
                 {
+                    Print.Verbose($"Searching file: {file}");
+
                     var increment = false; // reset file counter flag
 
                     IEnumerable<string>? lines = null;
@@ -50,7 +52,7 @@ namespace PANSearcher.Context
                             if (PAN.Validate(item, out var cardType))
                             {
                                 var pan = PAN.Format(item, displayMode);
-                                Console.WriteLine($"FOUND PAN: {pan} - {Enum.GetName(typeof(CardType), cardType)} (Path: {file})");
+                                Print.Output($"FOUND PAN: {pan} - {Enum.GetName(typeof(CardType), cardType)} (Path: {file})");
                                 increment = true;
                             }
                         }
@@ -64,11 +66,11 @@ namespace PANSearcher.Context
 
             if (fileCounter == 0)
             {
-                Console.WriteLine($"{Environment.NewLine}No files with PAN number found.");
+                Print.Output($"{Environment.NewLine}No files with PAN number found.");
             }
             else
             {
-                Console.WriteLine($"{Environment.NewLine}Total {fileCounter} files found with at least one PAN number. To ignore the false positives, you can configure to ignore those folders.");
+                Print.Output($"{Environment.NewLine}Total {fileCounter} files found with at least one PAN number. To ignore the false positives, you can configure to ignore those folders.");
             }
         }
 

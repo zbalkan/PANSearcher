@@ -45,6 +45,18 @@ namespace PANSearcher
         /// <summary>
         ///     Displays help text.
         /// </summary>
+        [Argument('q', "quiet", "Quiet mode.")]
+        private static bool Quiet { get; set; }
+
+        /// <summary>
+        ///     Displays help text.
+        /// </summary>
+        [Argument('v', "verbose", "Verbose output. Ignored when used with 'q' flag. ")]
+        private static bool Verbose { get; set; }
+
+        /// <summary>
+        ///     Displays help text.
+        /// </summary>
         [Argument('c', "config", "Configuration file to use")]
         private static string? ConfigFile { get; set; }
 
@@ -53,7 +65,7 @@ namespace PANSearcher
             // enable ctrl+c
             Console.CancelKeyPress += (o, e) =>
             {
-                Console.WriteLine($"{Environment.NewLine}Operation cancelled by user.");
+                Print.Output($"{Environment.NewLine}Operation cancelled by user.");
                 Environment.Exit(1);
             };
 
@@ -67,16 +79,20 @@ namespace PANSearcher
 
             LoadSettings();
 
-            Console.WriteLine($"Started PAN number search. Root path: {SearchBase}{Environment.NewLine}");
+            Print.Output($"Started PAN number search. Root path: {SearchBase}{Environment.NewLine}");
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             Search();
             stopwatch.Stop();
-            Console.WriteLine($"{Environment.NewLine}PAN search completed in {stopwatch.Elapsed}.");
+            Print.Output($"{Environment.NewLine}PAN search completed in {stopwatch.Elapsed}.");
         }
 
         private static void LoadSettings()
         {
+            // Not all settings are configured
+            Print.PrintMode = GetPrintMode();
+
+
             // First load the application defaults or given config file
             // Unless specified, config values will be used
             Settings.Instance.LoadFromFile(ConfigFile);
@@ -94,6 +110,22 @@ namespace PANSearcher
             if (ExcludedPaths == null)
             {
                 ExcludedPaths = Settings.Instance.ExcludeFolders as string[];
+            }
+        }
+
+        private static PrintMode GetPrintMode()
+        {
+            if (Quiet)
+            {
+                return PrintMode.Quiet;
+            }
+            else if (Verbose)
+            {
+                return PrintMode.Verbose;
+            }
+            else
+            {
+                return PrintMode.Output;
             }
         }
 
@@ -148,13 +180,13 @@ namespace PANSearcher
             var maxLen = helpAttributes.Select(a => a.Property.PropertyType.ToColloquialString()).OrderByDescending(s => s.Length).FirstOrDefault().Length;
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-            Console.WriteLine($"Short\tLong\t\t{"Type".PadRight(maxLen)}\tFunction");
-            Console.WriteLine($"-----\t----\t\t{"----".PadRight(maxLen)}\t--------");
+            Print.Output($"Short\tLong\t\t{"Type".PadRight(maxLen)}\tFunction");
+            Print.Output($"-----\t----\t\t{"----".PadRight(maxLen)}\t--------");
 
             foreach (var item in helpAttributes)
             {
                 var result = item.ShortName + "\t" + item.LongName + "\t" + item.Property.PropertyType.ToColloquialString().PadRight(maxLen) + "\t" + item.HelpText;
-                Console.WriteLine(result);
+                Print.Output(result);
             }
         }
     }
