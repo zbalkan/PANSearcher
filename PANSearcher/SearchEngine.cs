@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 
 namespace PANSearcher.Context
 {
@@ -16,52 +17,22 @@ namespace PANSearcher.Context
             foreach (var textFileExt in extensions)
             {
                 Print.Output($"Started searching for files with '*{textFileExt}' extensions");
-                foreach (var file in Directory.EnumerateFiles(searchBase, $"*{textFileExt}", options).Where(f => !IsExcluded(f, excluded)))
+                var files = Directory.EnumerateFiles(searchBase, $"*{textFileExt}", options).Where(f => !IsExcluded(f, excluded));
+
+                var matches = from file in files.AsParallel().AsOrdered().WithMergeOptions(ParallelMergeOptions.NotBuffered)
+                              from line in context.Read(file).Zip(Enumerable.Range(1, int.MaxValue), (s, i) => new { Num = i, Text = s, File = file })
+                              from found in PAN.ParseLine(line.Text)
+                              where (found.Any() && PAN.Validate(found, out var cardType))
+                              select new { line, found };
+
+                foreach (var match in matches)
                 {
-                    Print.Verbose($"Searching file: {file}");
-
-                    var increment = false; // reset file counter flag
-
-                    IEnumerable<string>? lines = null;
-
-                    try
-                    {
-                        lines = context.Read(file);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e.Message);
-                        continue;
-                    }
-
-                    if (lines == null || !lines.Any())
-                    {
-                        continue;
-                    }
-
-                    foreach (var line in lines)
-                    {
-                        var found = PAN.ParseLine(line);
-                        if (found.Count == 0)
-                        {
-                            continue;
-                        }
-
-                        foreach (var item in found)
-                        {
-                            if (PAN.Validate(item, out var cardType))
-                            {
-                                var pan = PAN.Format(item, displayMode);
-                                Print.Output($"FOUND PAN: {pan} - {Enum.GetName(typeof(CardType), cardType)} (Path: {file})");
-                                increment = true;
-                            }
-                        }
-                    }
-                    if (increment)
-                    {
-                        fileCounter++;
-                    }
+                    _ = PAN.Validate(match.found, out var cardType);
+                    var pan = PAN.Format(match.found, displayMode);
+                    Print.Output($"FOUND PAN: {match.found} - {Enum.GetName(typeof(CardType), cardType)} [{match.line.File} : {match.line.Num}]");
                 }
+
+                fileCounter += matches.GroupBy(m => m.line.File).Count();
             }
 
             if (fileCounter == 0)

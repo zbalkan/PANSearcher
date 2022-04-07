@@ -6,6 +6,6 @@
     /// </summary>
     public interface IContext
     {
-        IEnumerable<string>? Read(string path);
+        IEnumerable<string> Read(string path);
     }
 }
