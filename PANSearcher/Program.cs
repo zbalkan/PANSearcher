@@ -44,7 +44,7 @@ namespace PANSearcher
 
         private static Config? config;
 
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             // enable ctrl+c
             Console.CancelKeyPress += (o, e) =>
@@ -66,7 +66,7 @@ namespace PANSearcher
             Console.WriteLine($"Started PAN number search. Root path: {SearchBase}{Environment.NewLine}");
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            await Search();
+            Search();
             stopwatch.Stop();
             Console.WriteLine($"{Environment.NewLine}PAN search completed in {stopwatch.Elapsed}.");
         }
@@ -95,14 +95,15 @@ namespace PANSearcher
             }
         }
 
-        private static async Task Search()
+        private static void Search()
         {
             var factory = new TaskFactory();
+            var engine = new SearchEngine();
 
 #pragma warning disable CS8604 // Possible null reference argument.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             // TODO: A task for each type of files.
-            var textFileContextTask = factory.StartNew(async () => await new TextFileContext(config.TextFileExtensions).Search(SearchBase, ExcludedPaths, DisplayType));
+            var textFileContextTask = factory.StartNew(() => SearchEngine.Search(SearchBase, ExcludedPaths, config.TextFileExtensions, new TextFileContext(), DisplayType));
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8604 // Possible null reference argument.
 
