@@ -42,8 +42,6 @@ namespace PANSearcher
         [Argument('c', "config", "Configuration file to use")]
         private static string? ConfigFile { get; set; }
 
-        private static Config? config;
-
         public static void Main(string[] args)
         {
             // enable ctrl+c
@@ -61,7 +59,7 @@ namespace PANSearcher
                 return;
             }
 
-            LoadConfig();
+            LoadSettings();
 
             Console.WriteLine($"Started PAN number search. Root path: {SearchBase}{Environment.NewLine}");
             var stopwatch = new Stopwatch();
@@ -71,27 +69,20 @@ namespace PANSearcher
             Console.WriteLine($"{Environment.NewLine}PAN search completed in {stopwatch.Elapsed}.");
         }
 
-        private static void LoadConfig()
+        private static void LoadSettings()
         {
             // First load the application defaults or given config file
             // Unless specified, config values will be used
-            if (!string.IsNullOrEmpty(ConfigFile))
-            {
-                config = new Config(ConfigFile);
-            }
-            else
-            {
-                config = new Config();
-            }
+            Settings.Instance.LoadFromFile(ConfigFile);
 
             if (string.IsNullOrEmpty(SearchBase))
             {
-                SearchBase = config.SearchBase;
+                SearchBase = Settings.Instance.SearchBase;
             }
 
             if (ExcludedPaths == null)
             {
-                ExcludedPaths = config.ExcludeFolders as string[];
+                ExcludedPaths = Settings.Instance.ExcludeFolders as string[];
             }
         }
 
@@ -103,7 +94,7 @@ namespace PANSearcher
 #pragma warning disable CS8604 // Possible null reference argument.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             // TODO: A task for each type of files.
-            var textFileContextTask = factory.StartNew(() => SearchEngine.Search(SearchBase, ExcludedPaths, config.TextFileExtensions, new TextFileContext(), DisplayMode));
+            var textFileContextTask = factory.StartNew(() => SearchEngine.Search(SearchBase, ExcludedPaths, Settings.Instance.TextFileExtensions, new TextFileContext(), DisplayMode));
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8604 // Possible null reference argument.
 

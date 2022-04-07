@@ -3,7 +3,7 @@ using SharpConfig;
 
 namespace PANSearcher
 {
-    internal class Config
+    internal class Settings
     {
         public string? SearchBase { get; set; }
 
@@ -25,52 +25,62 @@ namespace PANSearcher
 
         public IEnumerable<string>? ExcludePans { get; set; }
 
-        private readonly Section _defaultConfig;
+        private static readonly Lazy<Settings> LazyInstance = new(() => new Settings());
 
-        public Config(string path)
-        {
-            var config = Configuration.LoadFromFile(path);
-            _defaultConfig = config["Default"];
-            Map();
-        }
+        public static Settings Instance = LazyInstance.Value;
 
-        public Config()
+        private Section? _defaultSection;
+
+        public void LoadFromFile(string? path = null)
         {
-            var config = new Configuration
+            Configuration config;
+            if (string.IsNullOrEmpty(path))
             {
-                new Section("Default")
-            };
-            _defaultConfig = config["Default"];
+                config = new Configuration
+                {
+                    new Section("Default")
+                };
+            }
+            else
+            {
+                config = Configuration.LoadFromFile(path);
+            }
+
+            _defaultSection = config["Default"];
             Map();
         }
-
         private void Map()
         {
-            var searchBase = _defaultConfig["search"].StringValue;
+            if (_defaultSection == null) 
+            {
+                throw new InvalidOperationException("Invalid configuration.");
+            }
+
+            var searchBase = _defaultSection["search"].StringValue;
             SearchBase = string.IsNullOrEmpty(searchBase) ? FindSearchBaseByOS() : searchBase;
 
-            var excludeFolders = _defaultConfig["exclude"].StringValue;
+            var excludeFolders = _defaultSection["exclude"].StringValue;
             if (string.IsNullOrEmpty(excludeFolders))
             {
                 excludeFolders = FindExcludeFoldersByOS();
             }
             ExcludeFolders = excludeFolders.Split(',');
 
-            var textFileExtensions = _defaultConfig["textfiles"].StringValue;
+            var textFileExtensions = _defaultSection["textfiles"].StringValue;
             if (string.IsNullOrEmpty(textFileExtensions))
             {
                 textFileExtensions = ".doc,.xls,.xml,.txt,.csv,.log";
             }
             TextFileExtensions = textFileExtensions.Split(',');
 
-            var zipFileExtensions = _defaultConfig["zipfiles"].StringValue;
+            var zipFileExtensions = _defaultSection["zipfiles"].StringValue;
             if (string.IsNullOrEmpty(zipFileExtensions))
             {
                 zipFileExtensions = ".docx,.xlsx,.zip";
             }
             ZipFileExtensions = zipFileExtensions.Split(',');
 
-            var specialFileExtensions = _defaultConfig["specialfiles"].StringValue;
+            var specialFileExtensions = _defaultSection["specialfiles"].StringValue;
             if (string.IsNullOrEmpty(zipFileExtensions))
             {
                 specialFileExtensions = ".msg";
@@ -78,30 +88,30 @@ namespace PANSearcher
             SpecialFileExtensions = specialFileExtensions.Split(',');
 
 
-            var mailFileExtensions = _defaultConfig["mailfiles"].StringValue;
+            var mailFileExtensions = _defaultSection["mailfiles"].StringValue;
             if (string.IsNullOrEmpty(zipFileExtensions))
             {
                 mailFileExtensions = ".pst";
             }
             MailFileExtensions = mailFileExtensions.Split(',');
 
-            var otherFileExtensions = _defaultConfig["otherfiles"].StringValue;
+            var otherFileExtensions = _defaultSection["otherfiles"].StringValue;
             if (string.IsNullOrEmpty(zipFileExtensions))
             {
                 otherFileExtensions = ".ost,.accdb,.mdb";
             }
             OtherFileExtensions = otherFileExtensions.Split(',');
 
-            var outputFileName = _defaultConfig["outfile"].StringValue;
+            var outputFileName = _defaultSection["outfile"].StringValue;
             if (string.IsNullOrEmpty(outputFileName))
             {
                 outputFileName = $"PANSearcher_%s.txt";
             }
             OutputFileName = outputFileName.Replace("%s", DateTime.Now.ToString("yyyy - MM - dd - HHmmss"));
 
-            Unmask = _defaultConfig["unmask"] != null && _defaultConfig["unmask"].BoolValue;
+            Unmask = _defaultSection["unmask"] != null && _defaultSection["unmask"].BoolValue;
 
-            var excludePans = _defaultConfig["excludepans"].StringValue;
+            var excludePans = _defaultSection["excludepans"].StringValue;
             if (string.IsNullOrEmpty(zipFileExtensions))
             {
                 excludePans = ".ost,.accdb,.mdb";
