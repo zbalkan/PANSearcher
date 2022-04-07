@@ -31,34 +31,42 @@ namespace PANSearcher
         private static bool ShowHelpText { get; set; }
 
         /// <summary>
-        ///     Displays help text.
+        ///     Displays PAN numbers unmasked. Ignored when used with 't' flag.
         /// </summary>
         [Argument('u', "unmask", "Displays PAN numbers unmasked. Ignored when used with 't' flag.")]
         private static bool Unmask { get; set; }
 
         /// <summary>
-        ///     Displays help text.
+        ///     Displays PAN numbers truncated.
         /// </summary>
         [Argument('t', "truncate", "Displays PAN numbers truncated.")]
         private static bool Truncate { get; set; }
 
         /// <summary>
-        ///     Displays help text.
+        ///     Quiet mode.
         /// </summary>
         [Argument('q', "quiet", "Quiet mode.")]
         private static bool Quiet { get; set; }
 
         /// <summary>
-        ///     Displays help text.
+        ///     Verbose output. Ignored when used with 'q' flag.
         /// </summary>
-        [Argument('v', "verbose", "Verbose output. Ignored when used with 'q' flag. ")]
+        [Argument('v', "verbose", "Verbose output. Ignored when used with 'q' flag.")]
         private static bool Verbose { get; set; }
+
+        /// <summary>
+        ///     Path of configuration file.
+        /// </summary>
+        [Argument('c', "config", "Path of configuration file.")]
+        private static string? ConfigFile { get; set; }
 
         /// <summary>
         ///     Displays help text.
         /// </summary>
-        [Argument('c', "config", "Configuration file to use")]
-        private static string? ConfigFile { get; set; }
+        [Argument('o', "outfile", "Output file name for PAN report.")]
+        private static string? OutFile { get; set; }
+
+        private static Report report;
 
         public static void Main(string[] args)
         {
@@ -82,9 +90,23 @@ namespace PANSearcher
             Print.Output($"Started PAN number search. Root path: {SearchBase}{Environment.NewLine}");
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            Search();
+            var findings = Search();
             stopwatch.Stop();
             Print.Output($"{Environment.NewLine}PAN search completed in {stopwatch.Elapsed}.");
+
+            PrintReport(findings, string.Join(' ', args));
+        }
+
+        private static void PrintReport(List<Finding> findings, string args)
+        {
+            report = new Report(findings);
+#pragma warning disable CS8604 // Possible null reference argument.
+            var command = Path.Combine(Process.GetCurrentProcess().ProcessName, args);
+            var reportText = report.Prepare(SearchBase, string.Join(' ', ExcludedPaths), command);
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+            File.WriteAllText(Path.Combine(path, OutFile.Replace("%s", DateTime.Now.ToString("yyyy-MM-dd-HHmmss"))), reportText);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         private static void LoadSettings()
@@ -111,6 +133,11 @@ namespace PANSearcher
             {
                 ExcludedPaths = Settings.Instance.ExcludeFolders as string[];
             }
+
+            if (OutFile == null)
+            {
+                OutFile = Settings.Instance.OutputFileName;
+            }
         }
 
         private static PrintMode GetPrintMode()
@@ -129,17 +156,24 @@ namespace PANSearcher
             }
         }
 
-        private static void Search()
+        private static List<Finding> Search()
         {
-            var factory = new TaskFactory();
             var engine = new SearchEngine();
+            var findings = new List<Finding>();
 
 #pragma warning disable CS8604 // Possible null reference argument.
             // TODO: A task for each type of files.
-            var textFileContextTask = factory.StartNew(() => SearchEngine.Search(SearchBase, ExcludedPaths, TextFileExtensions, new TextFileContext(), DisplayMode));
+            var tasks = new Task<List<Finding>>[1];
+            tasks[0] = new Task<List<Finding>>(() => SearchEngine.Search(SearchBase, ExcludedPaths, TextFileExtensions, new TextFileContext(), DisplayMode));
+            tasks[0].Start();
 #pragma warning restore CS8604 // Possible null reference argument.
 
-            Task.WaitAll(textFileContextTask);
+            Task.WaitAll(tasks);
+            foreach (var task in tasks)
+            {
+                findings.AddRange(task.Result);
+            }
+            return findings;
         }
 
         private static PANDisplayMode DisplayMode

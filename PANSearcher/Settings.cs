@@ -107,7 +107,7 @@ namespace PANSearcher
             {
                 outputFileName = $"PANSearcher_%s.txt";
             }
-            OutputFileName = outputFileName.Replace("%s", DateTime.Now.ToString("yyyy - MM - dd - HHmmss"));
+            OutputFileName = outputFileName;
 
             Unmask = _defaultSection["unmask"] != null && _defaultSection["unmask"].BoolValue;
 

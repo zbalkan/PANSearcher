@@ -2,33 +2,38 @@
 {
     public class SearchEngine
     {
-        public static void Search(string searchBase, string[] excluded, string[] extensions, IContext context, PANDisplayMode displayMode = PANDisplayMode.Masked)
+        public static List<Finding> Search(string searchBase, string[] excluded, string[] extensions, IContext context, PANDisplayMode displayMode = PANDisplayMode.Masked)
         {
-            var fileCounter = 0;
-            var tasks = new Task<int>[extensions.Length];
+            var findings = new List<Finding>();
+            var tasks = new Task<List<Finding>>[extensions.Length];
             for (var i = 0; i < extensions.Length; i++)
             {
                 var extension = extensions[i];
-                tasks[i] = new Task<int>(() => RunSearch(searchBase, excluded, context, displayMode, extension));
+                tasks[i] = new Task<List<Finding>>(() => RunSearch(searchBase, excluded, context, displayMode, extension));
                 tasks[i].Start();
             }
-            foreach (var task in tasks)
+            _ = Task.WhenAll(tasks);
+            foreach (var task  in tasks)
             {
-                fileCounter += task.Result;
+                findings.AddRange(task.Result);
             }
 
-            if (fileCounter == 0)
+            if (findings.Count == 0)
             {
                 Print.Output($"{Environment.NewLine}No files with PAN number found.");
             }
             else
             {
-                Print.Output($"{Environment.NewLine}Total {fileCounter} files found with at least one PAN number. To ignore the false positives, you can configure to ignore those folders.");
+                Print.Output($"{Environment.NewLine}Total {findings.Count} files found with at least one PAN number. To ignore the false positives, you can configure to ignore those folders.");
             }
+
+            return findings;
         }
 
-        private static int RunSearch(string searchBase, string[] excluded, IContext context, PANDisplayMode displayMode, string textFileExt)
+        private static List<Finding> RunSearch(string searchBase, string[] excluded, IContext context, PANDisplayMode displayMode, string textFileExt)
         {
+            var findings = new List<Finding>();
+
             Print.Output($"Started searching for files with '*{textFileExt}' extensions");
             var options = new EnumerationOptions
             {
@@ -48,9 +53,38 @@
                 _ = PAN.Validate(match.found, out var cardType);
                 var pan = PAN.Format(match.found, displayMode);
                 Print.Output($"FOUND PAN: {match.found} - {Enum.GetName(typeof(CardType), cardType)} [{match.line.File} : {match.line.Num}]");
+
+                var finding = findings.FirstOrDefault(f => f.FilePath.Equals(match.line.File, StringComparison.OrdinalIgnoreCase));
+                if (finding == null)
+                {
+                    findings.Add(new Finding()
+                    {
+                        FilePath = match.line.File,
+                        Records = new List<Record>()
+                        {
+                            new Record()
+                            {
+                                PossiblePAN = match.found,
+                                CardType = cardType,
+                                LineNumber = match.line.Num,
+                                LineText = match.line.Text
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    finding.Records.Add(new Record()
+                    {
+                        PossiblePAN = match.found,
+                        CardType = cardType,
+                        LineNumber = match.line.Num,
+                        LineText = match.line.Text
+                    });
+                }
             }
 
-            return matches.GroupBy(m => m.line.File).Count();
+            return findings;
         }
 
         private static bool IsExcluded(string filePath, string[] excluded)
