@@ -31,7 +31,7 @@ usage: PANSearcher [ARGUMENTS]
 | -e | --SPECIALFILES | Special file extensions to search | `.msg` | NOT IMPLEMENTED |
 | -m | --MAILFILES | Email file extensions to search | `.pst` | NOT IMPLEMENTED |
 | -l | --OTHERFILES | Other file extensions to list | `.ost,.accdb,.mdb` | NOT IMPLEMENTED |
-| -o | --OUTFILE | Output file name for PAN report | `panhunt_YYYY-MM-DD-HHMMSS.txt` | NOT IMPLEMENTED |
+| -o | --outfile | Output file name for PAN report | `panhunt_YYYY-MM-DD-HHMMSS.txt` | IMPLEMENTED |
 | -C | --config | configuration file to use | | IMPLEMENTED |
 | -X | --EXCLUDEPAN | The PAN to exclude from search | | NOT IMPLEMENTED |
 | -u | --unmask | Unmask PANs in output | | IMPLEMENTED |
