@@ -22,9 +22,12 @@ namespace PANSearcher
             NumberOfFiles = 0;
         }
 
-        public string Prepare(string searchBase, string excluded)
+        public string Prepare()
         {
-
+            var searchBase = Settings.Instance.SearchBase;
+#pragma warning disable CS8604 // Possible null reference argument.
+            var excluded = string.Join(' ', Settings.Instance.ExcludeFolders);
+#pragma warning restore CS8604 // Possible null reference argument.
             var args = new string[Environment.GetCommandLineArgs().Length - 1];
             for (var i = 0; i < args.Length; i++)
             {

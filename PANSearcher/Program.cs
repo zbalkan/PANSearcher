@@ -85,7 +85,7 @@ namespace PANSearcher
 
             LoadSettings();
 
-            Print.Output($"Started PAN number search. Root path: {SearchBase}{Environment.NewLine}");
+            Print.Output($"Started PAN number search. Root path: {Settings.Instance.SearchBase}{Environment.NewLine}");
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             var report = Search();
@@ -109,7 +109,7 @@ namespace PANSearcher
         private static void PrintReport(Report report)
         {
 #pragma warning disable CS8604 // Possible null reference argument.
-            var reportText = report.Prepare(SearchBase, string.Join(' ', ExcludedPaths));
+            var reportText = report.Prepare();
             var path = Path.Combine((string?)Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "PANSearcher");
             if (!Directory.Exists(path))
             {
@@ -117,68 +117,51 @@ namespace PANSearcher
             }
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            File.WriteAllText(Path.Combine(path, OutFile.Replace("%s", DateTime.Now.ToString("yyyy-MM-dd-HHmmss"))), reportText);
+            File.WriteAllText(Path.Combine(path, Settings.Instance.OutputFileName.Replace("%s", DateTime.Now.ToString("yyyy-MM-dd-HHmmss"))), reportText);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8604 // Possible null reference argument.
         }
 
         private static void LoadSettings()
         {
-            // Not all settings are configured
-            Print.PrintMode = GetPrintMode();
-
-
             // First load the application defaults or given config file
             // Unless specified, config values will be used
             Settings.Instance.LoadFromFile(ConfigFile);
 
-            if (string.IsNullOrEmpty(SearchBase))
+            if (!string.IsNullOrEmpty(SearchBase))
             {
-                SearchBase = Settings.Instance.SearchBase;
+                Settings.Instance.SearchBase = SearchBase;
             }
 
-            if (TextFileExtensions == null)
+            if (TextFileExtensions != null)
             {
-                TextFileExtensions = Settings.Instance.TextFileExtensions as string[];
+                Settings.Instance.TextFileExtensions = TextFileExtensions;
             }
 
-            if (ExcludedPaths == null)
+            if (ExcludedPaths != null)
             {
-                ExcludedPaths = Settings.Instance.ExcludeFolders as string[];
+                Settings.Instance.ExcludeFolders = ExcludedPaths;
             }
 
-            if (OutFile == null)
+            if (OutFile != null)
             {
-                OutFile = Settings.Instance.OutputFileName;
+                Settings.Instance.OutputFileName = OutFile;
             }
-        }
 
-        private static PrintMode GetPrintMode()
-        {
-            if (Quiet)
-            {
-                return PrintMode.Quiet;
-            }
-            else if (Verbose)
-            {
-                return PrintMode.Verbose;
-            }
-            else
-            {
-                return PrintMode.Output;
-            }
+            Settings.Instance.SetPrintMode(Quiet, Verbose);
+
+            Settings.Instance.SetDisplayMode(Truncate, Unmask);
         }
 
         private static Report Search()
         {
             var engine = new SearchEngine();
             var report = new Report();
-#pragma warning disable CS8604 // Possible null reference argument.
+
             // TODO: A task for each type of files.
             var tasks = new Task<Report>[1];
-            tasks[0] = new Task<Report>(() => SearchEngine.Search(SearchBase, ExcludedPaths, TextFileExtensions, new TextFileContext(), DisplayMode));
+            tasks[0] = new Task<Report>(() => SearchEngine.Search(new TextFileContext()));
             tasks[0].Start();
-#pragma warning restore CS8604 // Possible null reference argument.
 
             Task.WaitAll(tasks);
             foreach (var task in tasks)
@@ -186,25 +169,6 @@ namespace PANSearcher
                 report.ImportFrom(task.Result);
             }
             return report;
-        }
-
-        private static PANDisplayMode DisplayMode
-        {
-            get
-            {
-                if (Truncate)
-                {
-                    return PANDisplayMode.Truncated;
-                }
-                else if (Unmask)
-                {
-                    return PANDisplayMode.Unmasked;
-                }
-                else
-                {
-                    return PANDisplayMode.Masked;
-                }
-            }
         }
 
         /// <summary>

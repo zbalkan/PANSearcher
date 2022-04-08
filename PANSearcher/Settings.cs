@@ -23,6 +23,10 @@ namespace PANSearcher
 
         public bool Unmask { get; set; }
 
+        public PrintMode PrintMode { get; set; } = PrintMode.Output;
+
+        public PANDisplayMode PANDisplayMode { get; set; } = PANDisplayMode.Masked;
+
         public IEnumerable<string>? ExcludePans { get; set; }
 
         private static readonly Lazy<Settings> LazyInstance = new(() => new Settings());
@@ -49,6 +53,39 @@ namespace PANSearcher
             _defaultSection = config["Default"];
             Map();
         }
+
+        public PrintMode SetPrintMode(bool quiet, bool verbose)
+        {
+            if (quiet)
+            {
+                return PrintMode.Quiet;
+            }
+            else if (verbose)
+            {
+                return PrintMode.Verbose;
+            }
+            else
+            {
+                return PrintMode.Output;
+            }
+        }
+
+        public PANDisplayMode SetDisplayMode(bool truncate, bool unmask)
+        {
+            if (truncate)
+            {
+                return PANDisplayMode.Truncated;
+            }
+            else if (unmask)
+            {
+                return PANDisplayMode.Unmasked;
+            }
+            else
+            {
+                return PANDisplayMode.Masked;
+            }
+        }
+
         private void Map()
         {
             if (_defaultSection == null) 

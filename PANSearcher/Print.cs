@@ -2,7 +2,7 @@
 {
     public static class Print
     {
-        public static PrintMode PrintMode { get; set; } = PrintMode.Output;
+        private static PrintMode PrintMode => Settings.Instance.PrintMode;
 
 
         public static void Output(string message)
@@ -20,12 +20,5 @@
                 Console.WriteLine(message);
             }
         }
-    }
-
-    public enum PrintMode
-    {
-        Output,
-        Verbose,
-        Quiet
     }
 }
