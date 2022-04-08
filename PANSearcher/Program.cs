@@ -8,22 +8,10 @@ namespace PANSearcher
     {
         #region Arguments
         /// <summary>
-        ///     Gets or sets the base search directory.
+        ///     Path of configuration file.
         /// </summary>
-        [Argument('s', "search", @"Base directory to search in (default: C:\)")]
-        private static string? SearchBase { get; set; }
-
-        /// <summary>
-        ///     Paths to exclude from search.
-        /// </summary>
-        [Argument('x', "exclude", "Paths to exclude from search.")]
-        private static string[]? ExcludedPaths { get; set; }
-
-        /// <summary>
-        ///     Text file extensions to search.
-        /// </summary>
-        [Argument('t', "textfiles", "Text file extensions to search.")]
-        private static string[]? TextFileExtensions { get; set; }
+        [Argument('c', "config", "Path of configuration file.")]
+        private static string? ConfigFile { get; set; }
 
         /// <summary>
         ///     Displays help text and exits.
@@ -32,16 +20,10 @@ namespace PANSearcher
         private static bool ShowHelpText { get; set; }
 
         /// <summary>
-        ///     Displays PAN numbers unmasked. Ignored when used with 't' flag.
+        ///     Displays help text.
         /// </summary>
-        [Argument('u', "unmask", "Displays PAN numbers unmasked. Ignored when used with 't' flag.")]
-        private static bool Unmask { get; set; }
-
-        /// <summary>
-        ///     Displays PAN numbers truncated.
-        /// </summary>
-        [Argument('t', "truncate", "Displays PAN numbers truncated.")]
-        private static bool Truncate { get; set; }
+        [Argument('o', "outfile", "Output file name for PAN report.")]
+        private static string? OutFile { get; set; }
 
         /// <summary>
         ///     Quiet mode.
@@ -50,22 +32,40 @@ namespace PANSearcher
         private static bool Quiet { get; set; }
 
         /// <summary>
+        ///     Gets or sets the base search directory.
+        /// </summary>
+        [Argument('s', "search", @"Base directory to search in (default: C:\)")]
+        private static string? SearchBase { get; set; }
+
+        /// <summary>
+        ///     Text file extensions to search.
+        /// </summary>
+        [Argument('t', "textfiles", "Text file extensions to search.")]
+        private static string[]? TextFileExtensions { get; set; }
+
+        /// <summary>
+        ///     Displays PAN numbers unmasked. Ignored when used with 't' flag.
+        /// </summary>
+        [Argument('u', "unmask", "Displays PAN numbers unmasked. Ignored when used with 't' flag.")]
+        private static bool Unmask { get; set; }
+
+        /// <summary>
         ///     Verbose output. Ignored when used with 'q' flag.
         /// </summary>
         [Argument('v', "verbose", "Verbose output. Ignored when used with 'q' flag.")]
         private static bool Verbose { get; set; }
 
         /// <summary>
-        ///     Path of configuration file.
+        ///     Paths to exclude from search.
         /// </summary>
-        [Argument('c', "config", "Path of configuration file.")]
-        private static string? ConfigFile { get; set; }
+        [Argument('x', "exclude", "Paths to exclude from search.")]
+        private static string[]? ExcludedPaths { get; set; }
 
         /// <summary>
-        ///     Displays help text.
+        ///     Displays PAN numbers truncated. The flag 't' is used for text files, so a is used temporarily.
         /// </summary>
-        [Argument('o', "outfile", "Output file name for PAN report.")]
-        private static string? OutFile { get; set; }
+        [Argument('a', "truncate", "Displays PAN numbers truncated.")]
+        private static bool Truncate { get; set; }
         #endregion Arguments
 
         private static string? reportPath;
