@@ -18,7 +18,7 @@
             var alternate = false;
             var nx = cardnumber.Replace("-", "").Replace(" ", "").ToArray();
 
-            for (var i = cardnumber.Length - 1; i >= 0; i--)
+            for (var i = nx.Length - 1; i >= 0; i--)
             {
                 var n = int.Parse(nx[i].ToString());
 
