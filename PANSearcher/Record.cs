@@ -10,6 +10,6 @@
 
         public decimal LineNumber { get; set; }
 
-        public override string ToString() => $"{Enum.GetName(CardType)}:{PAN.Format(PossiblePAN, PANDisplayMode.Masked)} [Line: {LineNumber}]";
+        public override string ToString() => $"{Enum.GetName(CardType)}:{PAN.Format(PossiblePAN, Settings.Instance.PANDisplayMode)} [Line: {LineNumber}]";
     }
 }
