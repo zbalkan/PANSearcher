@@ -66,8 +66,6 @@ namespace PANSearcher
         [Argument('o', "outfile", "Output file name for PAN report.")]
         private static string? OutFile { get; set; }
 
-        private static Report report;
-
         public static void Main(string[] args)
         {
             // enable ctrl+c
@@ -100,19 +98,19 @@ namespace PANSearcher
             }
             else
             {
+#pragma warning disable IDE0071 // Simplify interpolation
                 Print.Output($"{Environment.NewLine}Searched {report.NumberOfFiles.ToString()} files. Total {report.Findings.Count} files found with at least one PAN number. To ignore the false positives, you can configure to ignore those folders.");
+#pragma warning restore IDE0071 // Simplify interpolation
             }
 
-            PrintReport(report, string.Join(' ', args));
+            PrintReport(report);
         }
 
-        private static void PrintReport(Report report, string args)
+        private static void PrintReport(Report report)
         {
 #pragma warning disable CS8604 // Possible null reference argument.
-            var command = $"{Process.GetCurrentProcess().MainModule.ModuleName} {args}";
-            var reportText = report.Prepare(SearchBase, string.Join(' ', ExcludedPaths), command);
-            var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var path = Path.Combine(home, "PANSearcher");
+            var reportText = report.Prepare(SearchBase, string.Join(' ', ExcludedPaths));
+            var path = Path.Combine((string?)Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "PANSearcher");
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);

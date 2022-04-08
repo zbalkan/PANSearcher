@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace PANSearcher
@@ -21,8 +22,19 @@ namespace PANSearcher
             NumberOfFiles = 0;
         }
 
-        public string Prepare(string searchBase, string excluded, string command)
+        public string Prepare(string searchBase, string excluded)
         {
+
+            var args = new string[Environment.GetCommandLineArgs().Length - 1];
+            for (var i = 0; i < args.Length; i++)
+            {
+                args[i] = Environment.GetCommandLineArgs()[i + 1];
+            }
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var command = $"{Process.GetCurrentProcess().MainModule.ModuleName} {string.Join(' ', args)}";
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
             var sb = new StringBuilder();
 
             sb.Append("PANSearcher Report - ")
