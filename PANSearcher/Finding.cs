@@ -10,25 +10,28 @@ namespace PANSearcher
 
         private FileInfo? fileInfo;
 
-        private FileInfo GetFileInfo()
+        private FileInfo FileInfo
         {
-            if (fileInfo == null)
+            get
             {
-                fileInfo = new FileInfo(FilePath);
-            }
+                if (fileInfo == null)
+                {
+                    fileInfo = new FileInfo(FilePath);
+                }
 
-            return fileInfo;
+                return fileInfo;
+            }
         }
 
         public override string ToString()
         {
             var sb = new StringBuilder();
             _ = sb.Append("FOUND PANs: ")
-                .Append(GetFileInfo().FullName)
+                .Append(FileInfo.FullName)
                 .Append(" (")
-                .Append(GetFileInfo().Length / 1024)
+                .Append(FileInfo.Length / 1024)
                 .Append("KB ")
-                .Append(GetFileInfo().CreationTime)
+                .Append(FileInfo.CreationTime)
                 .AppendLine(")");
 
             foreach (var record in Records)
