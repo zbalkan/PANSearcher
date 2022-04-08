@@ -18,15 +18,6 @@
                 findings.AddRange(task.Result);
             }
 
-            if (findings.Count == 0)
-            {
-                Print.Output($"{Environment.NewLine}No files with PAN number found.");
-            }
-            else
-            {
-                Print.Output($"{Environment.NewLine}Total {findings.Count} files found with at least one PAN number. To ignore the false positives, you can configure to ignore those folders.");
-            }
-
             return findings;
         }
 

@@ -94,6 +94,15 @@ namespace PANSearcher
             stopwatch.Stop();
             Print.Output($"{Environment.NewLine}PAN search completed in {stopwatch.Elapsed}.");
 
+            if (findings.Count == 0)
+            {
+                Print.Output($"{Environment.NewLine}No files with PAN number found.");
+            }
+            else
+            {
+                Print.Output($"{Environment.NewLine}Total {findings.Count} files found with at least one PAN number. To ignore the false positives, you can configure to ignore those folders.");
+            }
+
             PrintReport(findings, string.Join(' ', args));
         }
 
@@ -110,7 +119,9 @@ namespace PANSearcher
                 Directory.CreateDirectory(path);
             }
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             File.WriteAllText(Path.Combine(path, OutFile.Replace("%s", DateTime.Now.ToString("yyyy-MM-dd-HHmmss"))), reportText);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8604 // Possible null reference argument.
         }
 
