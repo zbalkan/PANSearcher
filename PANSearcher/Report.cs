@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text;
+using Microsoft.DotNet.PlatformAbstractions;
 
 namespace PANSearcher
 {
@@ -39,7 +39,7 @@ namespace PANSearcher
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             var sb = new StringBuilder();
-
+            
             sb.Append("PANSearcher Report - ")
                 .AppendLine(DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy"))
                 .AppendLine("====================================================================================================")
@@ -50,18 +50,18 @@ namespace PANSearcher
                 .Append("Command: ")
                 .AppendLine(command)
                 .Append("Uname: ")
-                .Append(Environment.OSVersion.Platform)
+                .Append(RuntimeEnvironment.OperatingSystem)
                 .Append(" | ")
                 .Append(Environment.MachineName)
                 .Append(" | ")
-                .Append(Environment.OSVersion.Version)
+                .Append(RuntimeEnvironment.OperatingSystemVersion)
                 .Append(" | ")
-                .Append(RuntimeInformation.ProcessArchitecture)
+                .Append(RuntimeEnvironment.RuntimeArchitecture)
                 .Append(" | ")
                 .AppendLine(Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER"))
                 .Append("Searched ")
                 .Append(NumberOfFiles)
-                .Append("files. Found ")
+                .Append(" files. Found ")
                 .Append(Findings.Count)
                 .AppendLine(" possible PANs.")
                 .AppendLine("====================================================================================================")
