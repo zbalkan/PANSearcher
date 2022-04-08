@@ -69,7 +69,9 @@ namespace PANSearcher
         private static string[]? ExcludedPaths { get; set; }
         #endregion Arguments
 
-        private static string? reportPath;
+        private const string reportsFolderName = "PANSearcherReports";
+
+        private static string? latestReport;
 
         public static void Main(string[] args)
         {
@@ -109,23 +111,23 @@ namespace PANSearcher
             }
 
             PrintReport(report);
-            Print.Output($"{Environment.NewLine}You can find the report: {reportPath}");
+            Print.Output($"{Environment.NewLine}You can find the report: {latestReport}");
         }
 
         private static void PrintReport(Report report)
         {
 #pragma warning disable CS8604 // Possible null reference argument.
             var reportText = report.Prepare();
-            var path = Path.Combine((string?)Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "PANSearcher");
+            var path = Path.Combine((string?)Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), reportsFolderName);
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            reportPath = Path.Combine(path, Settings.Instance.OutputFileName.Replace("%s", DateTime.Now.ToString("yyyy-MM-dd-HHmmss")));
+            latestReport = Path.Combine(path, Settings.Instance.OutputFileName.Replace("%s", DateTime.Now.ToString("yyyy-MM-dd-HHmmss")));
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-            File.WriteAllText(reportPath, reportText);
+            File.WriteAllText(latestReport, reportText);
 #pragma warning restore CS8604 // Possible null reference argument.
         }
 
