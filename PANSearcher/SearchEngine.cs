@@ -105,7 +105,7 @@ namespace PANSearcher
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             for (var i = 0; i < Settings.Instance.ExcludeFolders.Length; i++)
             {
-                if (filePath.StartsWith(Settings.Instance.ExcludeFolders[i]))
+                if (filePath.StartsWith(Settings.Instance.ExcludeFolders[i], StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
