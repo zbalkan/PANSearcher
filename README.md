@@ -23,22 +23,22 @@ usage: PANSearcher [ARGUMENTS]
 
 | Short | Long | Description | Default Value | Status |
 |-------|------|-------------|---------------|--------|
+| -a | --truncate | Truncate PANs in output | | IMPLEMENTED |
+| -c | --config | configuration file to use | | IMPLEMENTED |
 | -h | --help | Show this help message and exit | | IMPLEMENTED |
-| -s | --search | Base directory to search in | Windows: `C:\`, Others: `/` | IMPLEMENTED |
-| -x | --exclude | Directories to exclude from the search | Windows: `C:\Windows,C:\Program Files,C:\Program Files (x86)`. Others: `/mnt` | IMPLEMENTED |
-| -t | --textfiles | Text file extensions to search | `.doc,.xls,.xml,.txt,.csv` | IMPLEMENTED |
-| -z | --ZIPFILES | zip file extensions to search | `.docx,.xlsx,.zip` | NOT IMPLEMENTED |
-| -e | --SPECIALFILES | Special file extensions to search | `.msg` | NOT IMPLEMENTED |
-| -m | --MAILFILES | Email file extensions to search | `.pst` | NOT IMPLEMENTED |
-| -l | --OTHERFILES | Other file extensions to list | `.ost,.accdb,.mdb` | NOT IMPLEMENTED |
 | -o | --outfile | Output file name for PAN report | `panhunt_YYYY-MM-DD-HHMMSS.txt` | IMPLEMENTED |
-| -C | --config | configuration file to use | | IMPLEMENTED |
-| -X | --EXCLUDEPAN | The PAN to exclude from search | | NOT IMPLEMENTED |
-| -u | --unmask | Unmask PANs in output | | IMPLEMENTED |
-| -t | --truncate | Truncate PANs in output | | IMPLEMENTED |
-| -f | --format | Format report. Acceptable values: `txt, xml, json`. | `txt`  | NOT IMPLEMENTED |
-| -v | --verbose | Verbose output. | | IMPLEMENTED |
 | -q | --quiet | Quiet  | | IMPLEMENTED |
+| -s | --search | Base directory to search in | Windows: `C:\`, Others: `/` | IMPLEMENTED |
+| -t | --textfiles | Text file extensions to search | `.doc,.xls,.xml,.txt,.csv` | IMPLEMENTED |
+| -u | --unmask | Unmask PANs in output | | IMPLEMENTED |
+| -v | --verbose | Verbose output. | | IMPLEMENTED |
+| -x | --exclude | Directories to exclude from the search | Windows: `C:\Windows,C:\Program Files,C:\Program Files (x86)`. Others: `/mnt` | IMPLEMENTED |
+| -e | --SPECIALFILES | Special file extensions to search | `.msg` | NOT IMPLEMENTED |
+| -f | --format | Format report. Acceptable values: `txt, xml, json`. | `txt`  | NOT IMPLEMENTED |
+| -l | --OTHERFILES | Other file extensions to list | `.ost,.accdb,.mdb` | NOT IMPLEMENTED |
+| -m | --MAILFILES | Email file extensions to search | `.pst` | NOT IMPLEMENTED |
+| -p | --EXCLUDEPAN | The PAN to exclude from search | | NOT IMPLEMENTED |
+| -z | --ZIPFILES | zip file extensions to search | `.docx,.xlsx,.zip` | NOT IMPLEMENTED |
 
 ## TODO
 - [x] Get rid of interactive UI and use SYSTEM drive as default search root

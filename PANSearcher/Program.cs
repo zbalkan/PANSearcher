@@ -7,6 +7,13 @@ namespace PANSearcher
     public static class Program
     {
         #region Arguments
+
+        /// <summary>
+        ///     Displays PAN numbers truncated. The flag 't' is used for text files, so a is used temporarily.
+        /// </summary>
+        [Argument('a', "truncate", "Displays PAN numbers truncated.")]
+        private static bool Truncate { get; set; }
+
         /// <summary>
         ///     Path of configuration file.
         /// </summary>
@@ -60,12 +67,6 @@ namespace PANSearcher
         /// </summary>
         [Argument('x', "exclude", "Paths to exclude from search.")]
         private static string[]? ExcludedPaths { get; set; }
-
-        /// <summary>
-        ///     Displays PAN numbers truncated. The flag 't' is used for text files, so a is used temporarily.
-        /// </summary>
-        [Argument('a', "truncate", "Displays PAN numbers truncated.")]
-        private static bool Truncate { get; set; }
         #endregion Arguments
 
         private static string? reportPath;
