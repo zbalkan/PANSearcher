@@ -90,8 +90,8 @@ namespace PANSearcher
 
         private static string Truncate(string cardNumber)
         {
-            var first = cardNumber.Substring(0, 4);
-            var last = cardNumber.Substring(cardNumber.Length - 6, 5);
+            var first = cardNumber.Substring(0, 6);
+            var last = cardNumber.Substring(cardNumber.Length - 5, 4);
 
             return string.Concat(first, last);
         }

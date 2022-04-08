@@ -60,9 +60,9 @@ namespace PANSearcher
 
             foreach (var match in matches)
             {
-                _ = PAN.Validate(match.found, out var cardType);
+                 _ = PAN.Validate(match.found, out var cardType);
                 var pan = PAN.Format(match.found, Settings.Instance.PANDisplayMode);
-                Print.Output($"FOUND PAN: {match.found} - {Enum.GetName(typeof(CardType), cardType)} [{match.line.File} : {match.line.Num}]");
+                Print.Output($"FOUND PAN: {pan} - {Enum.GetName(typeof(CardType), cardType)} [{match.line.File} : {match.line.Num}]");
 
                 var finding = findings.FirstOrDefault(f => f.FilePath.Equals(match.line.File, StringComparison.OrdinalIgnoreCase));
                 if (finding == null)
