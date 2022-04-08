@@ -34,8 +34,9 @@ namespace PANSearcher
                 .Append(FileInfo.CreationTime)
                 .AppendLine(")");
 
-            foreach (var record in Records)
+            for (var i = 0; i < Records.Count; i++)
             {
+                var record = Records[i];
                 _ = sb.Append('\t').AppendLine(record.ToString());
             }
 

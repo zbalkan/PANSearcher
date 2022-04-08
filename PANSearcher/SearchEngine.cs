@@ -1,11 +1,20 @@
-﻿namespace PANSearcher.Context
+﻿using PANSearcher.Context;
+
+namespace PANSearcher
 {
     public class SearchEngine
     {
+        private static readonly EnumerationOptions defaultEnumOptions = new()
+        {
+            IgnoreInaccessible = true,
+            RecurseSubdirectories = false,
+            ReturnSpecialDirectories = false
+        };
+
         public static Report Search(IContext context)
         {
 
-            var extensions = Settings.Instance.TextFileExtensions as string[];
+            var extensions = Settings.Instance.TextFileExtensions;
             var report = new Report();
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -18,8 +27,9 @@
                 tasks[i].Start();
             }
             _ = Task.WhenAll(tasks);
-            foreach (var task  in tasks)
+            for (var i = 0; i < tasks.Length; i++)
             {
+                var task = tasks[i];
                 report.ImportFrom(task.Result);
             }
 
@@ -29,7 +39,7 @@
         private static Report RunSearch(IContext context, string extension)
         {
             var searchBase = Settings.Instance.SearchBase;
-            var excluded = Settings.Instance.ExcludeFolders as string[];
+            var excluded = Settings.Instance.ExcludeFolders;
             var findings = new List<Finding>();
 
             Print.Verbose($"Started searching for files with '*{extension}' extensions");
@@ -39,7 +49,7 @@
                 RecurseSubdirectories = true
             };
 #pragma warning disable CS8604 // Possible null reference argument.
-            var files = Directory.EnumerateFiles(searchBase, $"*{extension}", options).Where(f => !IsExcluded(f, excluded));
+            var files = SearchFiles(searchBase, $"*{extension}");
 #pragma warning restore CS8604 // Possible null reference argument.
 
             var matches = from file in files.AsParallel().AsOrdered().WithMergeOptions(ParallelMergeOptions.NotBuffered)
@@ -85,21 +95,60 @@
             }
             var report = new Report(findings)
             {
-                NumberOfFiles = files.Count()
+                NumberOfFiles = files.Count
             };
             return report;
         }
 
-        private static bool IsExcluded(string filePath, string[] excluded)
+        private static bool IsExcluded(string filePath)
         {
-            foreach (var excludedPath in excluded)
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            for (var i = 0; i < Settings.Instance.ExcludeFolders.Length; i++)
             {
-                if (filePath.StartsWith(excludedPath))
+                if (filePath.StartsWith(Settings.Instance.ExcludeFolders[i]))
                 {
                     return true;
                 }
             }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             return false;
+        }
+
+        /// <summary> 
+        /// A safe way to get all the files in a directory and sub directory without crashing on UnauthorizedException or PathTooLongException 
+        /// </summary> 
+        /// <param name="path">Starting directory</param> 
+        /// <param name="pattern">Filename pattern</param> 
+        /// <returns>List of files</returns> 
+        private static List<string> SearchFiles(string path, string pattern)
+        {
+            var files = new List<string>();
+
+            if (!IsExcluded(path))
+            {
+                try
+                {
+                    foreach (var directory in Directory.EnumerateDirectories(path))
+                    {
+                        files.AddRange(SearchFiles(directory, pattern));
+                    }
+                }
+                catch
+                {
+                    // Skip those directories
+                }
+
+                try
+                {
+                    files.AddRange(Directory.EnumerateFiles(path, pattern, defaultEnumOptions));
+                }
+                catch
+                {
+                    // Skip those files
+                }
+            }
+
+            return files;
         }
     }
 }

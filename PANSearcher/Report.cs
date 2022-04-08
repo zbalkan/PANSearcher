@@ -82,8 +82,9 @@ namespace PANSearcher
         {
             var sb = new StringBuilder();
 
-            foreach (var finding in Findings)
+            for (var i = 0; i < Findings.Count; i++)
             {
+                var finding = Findings[i];
                 sb.AppendLine(finding.ToString());
             }
 

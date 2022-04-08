@@ -170,8 +170,9 @@ namespace PANSearcher
             tasks[0].Start();
 
             Task.WaitAll(tasks);
-            foreach (var task in tasks)
+            for (var i = 0; i < tasks.Length; i++)
             {
+                var task = tasks[i];
                 report.ImportFrom(task.Result);
             }
             return report;

@@ -14,11 +14,9 @@
                 return false;
             }
 
-            cardnumber = cardnumber.Replace("-", "");
-
             var sum = 0;
             var alternate = false;
-            var nx = cardnumber.ToArray();
+            var nx = cardnumber.Replace("-", "").Replace(" ", "").ToArray();
 
             for (var i = cardnumber.Length - 1; i >= 0; i--)
             {

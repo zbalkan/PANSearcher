@@ -2,7 +2,7 @@
   "profiles": {
     "PANSearcher": {
       "commandName": "Project",
-      "commandLineArgs": "-s C:\\Users\\ -u"
+      "commandLineArgs": "-s C:\\Users\\ -e C:\\Users\\Zafer\\AppData\\ -u"
     }
   }
 }

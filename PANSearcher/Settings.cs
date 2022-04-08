@@ -7,17 +7,17 @@ namespace PANSearcher
     {
         public string? SearchBase { get; set; }
 
-        public IEnumerable<string>? ExcludeFolders { get; set; }
+        public string[]? ExcludeFolders { get; set; }
 
-        public IEnumerable<string>? TextFileExtensions { get; set; }
+        public string[]? TextFileExtensions { get; set; }
 
-        public IEnumerable<string>? ZipFileExtensions { get; set; }
+        public string[]? ZipFileExtensions { get; set; }
 
-        public IEnumerable<string>? SpecialFileExtensions { get; set; }
+        public string[]? SpecialFileExtensions { get; set; }
 
-        public IEnumerable<string>? MailFileExtensions { get; set; }
+        public string[]? MailFileExtensions { get; set; }
 
-        public IEnumerable<string>? OtherFileExtensions { get; set; }
+        public string[]? OtherFileExtensions { get; set; }
 
         public string? OutputFileName { get; set; }
 
@@ -27,7 +27,7 @@ namespace PANSearcher
 
         public PANDisplayMode PANDisplayMode { get; set; } = PANDisplayMode.Masked;
 
-        public IEnumerable<string>? ExcludePans { get; set; }
+        public string[]? ExcludePans { get; set; }
 
         private static readonly Lazy<Settings> LazyInstance = new(() => new Settings());
 
@@ -54,41 +54,41 @@ namespace PANSearcher
             Map();
         }
 
-        public PrintMode SetPrintMode(bool quiet, bool verbose)
+        public void SetPrintMode(bool quiet, bool verbose)
         {
             if (quiet)
             {
-                return PrintMode.Quiet;
+                PrintMode =  PrintMode.Quiet;
             }
             else if (verbose)
             {
-                return PrintMode.Verbose;
+                PrintMode = PrintMode.Verbose;
             }
             else
             {
-                return PrintMode.Output;
+                PrintMode = PrintMode.Output;
             }
         }
 
-        public PANDisplayMode SetDisplayMode(bool truncate, bool unmask)
+        public void SetDisplayMode(bool truncate, bool unmask)
         {
             if (truncate)
             {
-                return PANDisplayMode.Truncated;
+                PANDisplayMode = PANDisplayMode.Truncated;
             }
             else if (unmask)
             {
-                return PANDisplayMode.Unmasked;
+                PANDisplayMode = PANDisplayMode.Unmasked;
             }
             else
             {
-                return PANDisplayMode.Masked;
+                PANDisplayMode = PANDisplayMode.Masked;
             }
         }
 
         private void Map()
         {
-            if (_defaultSection == null) 
+            if (_defaultSection == null)
             {
                 throw new InvalidOperationException("Invalid configuration.");
             }
@@ -97,67 +97,36 @@ namespace PANSearcher
             SearchBase = string.IsNullOrEmpty(searchBase) ? FindSearchBaseByOS() : searchBase;
 
             var excludeFolders = _defaultSection["exclude"].StringValue;
-            if (string.IsNullOrEmpty(excludeFolders))
-            {
-                excludeFolders = FindExcludeFoldersByOS();
-            }
-            ExcludeFolders = excludeFolders.Split(',');
+            ExcludeFolders = string.IsNullOrEmpty(excludeFolders) ? FindExcludeFoldersByOS() : excludeFolders.Split(',');
 
             var textFileExtensions = _defaultSection["textfiles"].StringValue;
-            if (string.IsNullOrEmpty(textFileExtensions))
-            {
-                textFileExtensions = ".doc,.xls,.xml,.txt,.csv,.log";
-            }
-            TextFileExtensions = textFileExtensions.Split(',');
+            TextFileExtensions = string.IsNullOrEmpty(textFileExtensions)
+                ? (new string[] { ".doc", ".xls", ".xml", ".txt", ".csv", ".log" })
+                : textFileExtensions.Split(',');
 
             var zipFileExtensions = _defaultSection["zipfiles"].StringValue;
-            if (string.IsNullOrEmpty(zipFileExtensions))
-            {
-                zipFileExtensions = ".docx,.xlsx,.zip";
-            }
-            ZipFileExtensions = zipFileExtensions.Split(',');
+            ZipFileExtensions = string.IsNullOrEmpty(zipFileExtensions) ? (new string[] { ".docx", ".xlsx", ".zip" }) : zipFileExtensions.Split(',');
 
             var specialFileExtensions = _defaultSection["specialfiles"].StringValue;
-            if (string.IsNullOrEmpty(zipFileExtensions))
-            {
-                specialFileExtensions = ".msg";
-            }
-            SpecialFileExtensions = specialFileExtensions.Split(',');
-
+            SpecialFileExtensions = string.IsNullOrEmpty(zipFileExtensions) ? (new string[] { ".msg" }) : specialFileExtensions.Split(',');
 
             var mailFileExtensions = _defaultSection["mailfiles"].StringValue;
-            if (string.IsNullOrEmpty(zipFileExtensions))
-            {
-                mailFileExtensions = ".pst";
-            }
-            MailFileExtensions = mailFileExtensions.Split(',');
+            MailFileExtensions = string.IsNullOrEmpty(zipFileExtensions) ? (new string[] { ".pst" }) : mailFileExtensions.Split(',');
 
             var otherFileExtensions = _defaultSection["otherfiles"].StringValue;
-            if (string.IsNullOrEmpty(zipFileExtensions))
-            {
-                otherFileExtensions = ".ost,.accdb,.mdb";
-            }
-            OtherFileExtensions = otherFileExtensions.Split(',');
+            OtherFileExtensions = string.IsNullOrEmpty(zipFileExtensions) ? (new string[] { ".ost", ".accdb", ".mdb" }) : otherFileExtensions.Split(',');
 
             var outputFileName = _defaultSection["outfile"].StringValue;
-            if (string.IsNullOrEmpty(outputFileName))
-            {
-                outputFileName = $"PANSearcher_%s.txt";
-            }
-            OutputFileName = outputFileName;
+            OutputFileName = string.IsNullOrEmpty(outputFileName) ? $"PANSearcher_%s.txt" : outputFileName;
 
             Unmask = _defaultSection["unmask"] != null && _defaultSection["unmask"].BoolValue;
 
             var excludePans = _defaultSection["excludepans"].StringValue;
-            if (string.IsNullOrEmpty(zipFileExtensions))
-            {
-                excludePans = ".ost,.accdb,.mdb";
-            }
-            ExcludePans = excludePans.Split(',');
+            ExcludePans = string.IsNullOrEmpty(zipFileExtensions) ? (new string[] { ".ost", ".accdb", ".mdb" }) : excludePans.Split(',');
         }
 
-        private string FindSearchBaseByOS() => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? @"C:\" : "/";
+        private static string FindSearchBaseByOS() => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? @"C:\" : "/";
 
-        private string FindExcludeFoldersByOS() => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? @"C:\Windows,C:\Program Files,C:\Program Files (x86)" : "/mnt";
+        private static string[] FindExcludeFoldersByOS() => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? new string[] { @"C:\Windows", @"C:\Program Files", @"C:\Program Files (x86)" } : new string[] { "/mnt" };
     }
 }
