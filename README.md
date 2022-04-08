@@ -7,11 +7,15 @@ A command line application to search for PAN numbers in files. It is a hobby pro
 
 Although it is written from scratch, it is using directly (ripping off) some parts of PANHunt such as Regex patterns.
 
+**NB!** The current target is to run with with high performance and fast. Therefore, PANSearcher uses high CPU.
+
 ## Installation
 Currently it is portable. Download the compressed file, extract it and run. 
 
 There are two types of releases:
+
 **Standard:** Requires dotnet 6.0 installed.
+
 **Self contained:** Single-file executable with dotnet 6.0 and other dependencies included. Download and run.
 
 ## Usage
@@ -50,4 +54,4 @@ usage: PANSearcher [ARGUMENTS]
 - [ ] Add WZip file, PST and MSG file reading capability
 - [ ] Add advanced logging options such as json, syslog, event log formats pushing to a syslog server
 - [ ] Add email alerts
-- [ ] Use Spectre.Console for better UI
+- [ ] Use Spectre.Console for better UI experience
