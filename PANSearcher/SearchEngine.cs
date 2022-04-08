@@ -2,30 +2,31 @@
 {
     public class SearchEngine
     {
-        public static List<Finding> Search(string searchBase, string[] excluded, string[] extensions, IContext context, PANDisplayMode displayMode = PANDisplayMode.Masked)
+        public static Report Search(string searchBase, string[] excluded, string[] extensions, IContext context, PANDisplayMode displayMode = PANDisplayMode.Masked)
         {
-            var findings = new List<Finding>();
-            var tasks = new Task<List<Finding>>[extensions.Length];
+            var report = new Report();
+
+            var tasks = new Task<Report>[extensions.Length];
             for (var i = 0; i < extensions.Length; i++)
             {
                 var extension = extensions[i];
-                tasks[i] = new Task<List<Finding>>(() => RunSearch(searchBase, excluded, context, displayMode, extension));
+                tasks[i] = new Task<Report>(() => RunSearch(searchBase, excluded, context, displayMode, extension));
                 tasks[i].Start();
             }
             _ = Task.WhenAll(tasks);
             foreach (var task  in tasks)
             {
-                findings.AddRange(task.Result);
+                report.ImportFrom(task.Result);
             }
 
-            return findings;
+            return report;
         }
 
-        private static List<Finding> RunSearch(string searchBase, string[] excluded, IContext context, PANDisplayMode displayMode, string textFileExt)
+        private static Report RunSearch(string searchBase, string[] excluded, IContext context, PANDisplayMode displayMode, string textFileExt)
         {
             var findings = new List<Finding>();
 
-            Print.Output($"Started searching for files with '*{textFileExt}' extensions");
+            Print.Verbose($"Started searching for files with '*{textFileExt}' extensions");
             var options = new EnumerationOptions
             {
                 IgnoreInaccessible = true,
@@ -74,8 +75,11 @@
                     });
                 }
             }
-
-            return findings;
+            var report = new Report(findings)
+            {
+                NumberOfFiles = files.Count()
+            };
+            return report;
         }
 
         private static bool IsExcluded(string filePath, string[] excluded)

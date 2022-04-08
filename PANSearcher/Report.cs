@@ -7,9 +7,18 @@ namespace PANSearcher
     {
         public List<Finding> Findings { get; set; }
 
-        public Report(List<Finding> findings)
+        public int NumberOfFiles { get; set; }
+
+        public Report(List<Finding> findings, int numberOfFiles = 0)
         {
             Findings = findings;
+            NumberOfFiles = numberOfFiles;
+        }
+
+        public Report()
+        {
+            Findings = new List<Finding>();
+            NumberOfFiles = 0;
         }
 
         public string Prepare(string searchBase, string excluded, string command)
@@ -35,7 +44,9 @@ namespace PANSearcher
                 .Append(RuntimeInformation.ProcessArchitecture)
                 .Append(" | ")
                 .AppendLine(Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER"))
-                .Append("Found ")
+                .Append("Searched ")
+                .Append(NumberOfFiles)
+                .Append("files. Found ")
                 .Append(Findings.Count)
                 .AppendLine(" possible PANs.")
                 .AppendLine("====================================================================================================")
@@ -45,7 +56,12 @@ namespace PANSearcher
             return sb.ToString();
         }
 
+        public void ImportFrom(Report report)
+        {
+            Findings.AddRange(report.Findings);
 
+            NumberOfFiles += report.NumberOfFiles;
+        }
 
         public override string ToString()
         {

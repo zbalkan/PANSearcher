@@ -90,27 +90,26 @@ namespace PANSearcher
             Print.Output($"Started PAN number search. Root path: {SearchBase}{Environment.NewLine}");
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            var findings = Search();
+            var report = Search();
             stopwatch.Stop();
             Print.Output($"{Environment.NewLine}PAN search completed in {stopwatch.Elapsed}.");
 
-            if (findings.Count == 0)
+            if (report.Findings.Count == 0)
             {
                 Print.Output($"{Environment.NewLine}No files with PAN number found.");
             }
             else
             {
-                Print.Output($"{Environment.NewLine}Total {findings.Count} files found with at least one PAN number. To ignore the false positives, you can configure to ignore those folders.");
+                Print.Output($"{Environment.NewLine}Searched {report.NumberOfFiles.ToString()} files. Total {report.Findings.Count} files found with at least one PAN number. To ignore the false positives, you can configure to ignore those folders.");
             }
 
-            PrintReport(findings, string.Join(' ', args));
+            PrintReport(report, string.Join(' ', args));
         }
 
-        private static void PrintReport(List<Finding> findings, string args)
+        private static void PrintReport(Report report, string args)
         {
-            report = new Report(findings);
 #pragma warning disable CS8604 // Possible null reference argument.
-            var command = Path.Combine(Process.GetCurrentProcess().ProcessName, args);
+            var command = $"{Process.GetCurrentProcess().MainModule.ModuleName} {args}";
             var reportText = report.Prepare(SearchBase, string.Join(' ', ExcludedPaths), command);
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             var path = Path.Combine(home, "PANSearcher");
@@ -172,24 +171,23 @@ namespace PANSearcher
             }
         }
 
-        private static List<Finding> Search()
+        private static Report Search()
         {
             var engine = new SearchEngine();
-            var findings = new List<Finding>();
-
+            var report = new Report();
 #pragma warning disable CS8604 // Possible null reference argument.
             // TODO: A task for each type of files.
-            var tasks = new Task<List<Finding>>[1];
-            tasks[0] = new Task<List<Finding>>(() => SearchEngine.Search(SearchBase, ExcludedPaths, TextFileExtensions, new TextFileContext(), DisplayMode));
+            var tasks = new Task<Report>[1];
+            tasks[0] = new Task<Report>(() => SearchEngine.Search(SearchBase, ExcludedPaths, TextFileExtensions, new TextFileContext(), DisplayMode));
             tasks[0].Start();
 #pragma warning restore CS8604 // Possible null reference argument.
 
             Task.WaitAll(tasks);
             foreach (var task in tasks)
             {
-                findings.AddRange(task.Result);
+                report.ImportFrom(task.Result);
             }
-            return findings;
+            return report;
         }
 
         private static PANDisplayMode DisplayMode
