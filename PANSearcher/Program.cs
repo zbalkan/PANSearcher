@@ -6,6 +6,7 @@ namespace PANSearcher
 {
     public static class Program
     {
+        #region Arguments
         /// <summary>
         ///     Gets or sets the base search directory.
         /// </summary>
@@ -65,6 +66,9 @@ namespace PANSearcher
         /// </summary>
         [Argument('o', "outfile", "Output file name for PAN report.")]
         private static string? OutFile { get; set; }
+        #endregion Arguments
+
+        private static string? reportPath;
 
         public static void Main(string[] args)
         {
@@ -104,6 +108,7 @@ namespace PANSearcher
             }
 
             PrintReport(report);
+            Print.Output($"{Environment.NewLine}You can find the report: {reportPath}");
         }
 
         private static void PrintReport(Report report)
@@ -117,8 +122,9 @@ namespace PANSearcher
             }
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            File.WriteAllText(Path.Combine(path, Settings.Instance.OutputFileName.Replace("%s", DateTime.Now.ToString("yyyy-MM-dd-HHmmss"))), reportText);
+            reportPath = Path.Combine(path, Settings.Instance.OutputFileName.Replace("%s", DateTime.Now.ToString("yyyy-MM-dd-HHmmss")));
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
+            File.WriteAllText(reportPath, reportText);
 #pragma warning restore CS8604 // Possible null reference argument.
         }
 
@@ -177,7 +183,7 @@ namespace PANSearcher
         /// </summary>
         /// <param name="type">The type for which the colloquial name should be created.</param>
         /// <returns>A "pretty" string representation of the provided Type.</returns>
-        public static string ToColloquialString(this Type type) => (!type.IsGenericType ? type.Name : type.Name.Split('`')[0] + "<" + string.Join(", ", type.GetGenericArguments().Select(a => a.ToColloquialString())) + ">");
+        private static string ToColloquialString(this Type type) => (!type.IsGenericType ? type.Name : type.Name.Split('`')[0] + "<" + string.Join(", ", type.GetGenericArguments().Select(a => a.ToColloquialString())) + ">");
 
         /// <summary>
         ///     Show help for arguments.
