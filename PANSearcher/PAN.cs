@@ -54,11 +54,22 @@ namespace PANSearcher
             _ => Mask(PANNumber),
         };
 
+        /// <summary>
+        ///     By default all PANs are masked
+        /// </summary>
+        /// <para>
+        ///     PCI-DSS v3.2 - Req.3.3: Mask PAN when displayed (the first six and last four digits 
+        ///     are the maximum number of digits to be displayed), such that only personnel with a legitimate
+        ///     business need can see more than the first six/last four digits of the PAN.
+        /// </para>
+        /// <see href="https://www.pcisecuritystandards.org/"/>
+        /// <param name="cardNumber">PAN</param>
+        /// <returns></returns>
         private static string Mask(string cardNumber)
         {
-            var first = cardNumber.Substring(0, 4);
-            var middle = cardNumber.Substring(4, cardNumber.Length - 9);
-            var last = cardNumber.Substring(cardNumber.Length - 6, 5);
+            var first = cardNumber.Substring(0, 6);
+            var middle = cardNumber.Substring(6, cardNumber.Length - 10);
+            var last = cardNumber.Substring(cardNumber.Length - 5, 4);
 
             var maskedArray = new char[middle.Length];
 
