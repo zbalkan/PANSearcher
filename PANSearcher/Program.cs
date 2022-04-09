@@ -48,7 +48,7 @@ namespace PANSearcher
         ///     Text file extensions to search.
         /// </summary>
         [Argument('t', "textfiles", "Text file extensions to search.")]
-        private static string[]? TextFileExtensions { get; set; }
+        private static string? TextFileExtensions { get; set; }
 
         /// <summary>
         ///     Displays PAN numbers unmasked. Ignored when used with 't' flag.
@@ -66,7 +66,7 @@ namespace PANSearcher
         ///     Paths to exclude from search.
         /// </summary>
         [Argument('x', "exclude", "Paths to exclude from search.")]
-        private static string[]? ExcludedPaths { get; set; }
+        private static string? ExcludedPaths { get; set; }
 
         /// <summary>
         ///     Text file extensions to search.
@@ -149,9 +149,9 @@ namespace PANSearcher
                 Settings.Instance.SearchBase = SearchBase;
             }
 
-            if (TextFileExtensions != null)
+            if (!string.IsNullOrEmpty(TextFileExtensions))
             {
-                Settings.Instance.TextFileExtensions = TextFileExtensions;
+                Settings.Instance.TextFileExtensions = TextFileExtensions.Split(',');
             }
 
             if (!string.IsNullOrEmpty(ZipFileExtensions))
@@ -159,9 +159,9 @@ namespace PANSearcher
                 Settings.Instance.ZipFileExtensions = ZipFileExtensions.Split(',');
             }
 
-            if (ExcludedPaths != null)
+            if (!string.IsNullOrEmpty(ExcludedPaths))
             {
-                Settings.Instance.ExcludeFolders = ExcludedPaths;
+                Settings.Instance.ExcludeFolders = ExcludedPaths.Split(',');
             }
 
             if (OutFile != null)
