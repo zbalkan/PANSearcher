@@ -168,11 +168,19 @@ namespace PANSearcher
             var report = new Report();
 
             // TODO: A task for each type of files.
-            var tasks = new Task<Report>[1];
+            var tasks = new Task<Report>[2];
             tasks[0] = new Task<Report>(() => SearchEngine.Search(new TextFileContext()));
-            tasks[0].Start();
+            tasks[1] = new Task<Report>(() => SearchEngine.Search(new ZipFileContext()));
 
+            // Start all tasks and wait
+            for (var i = 0; i < tasks.Length; i++)
+            {
+                var task = tasks[i];
+                task.Start();
+            }
             Task.WaitAll(tasks);
+
+            // Combine reports
             for (var i = 0; i < tasks.Length; i++)
             {
                 var task = tasks[i];
