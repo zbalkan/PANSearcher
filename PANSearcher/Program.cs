@@ -67,6 +67,13 @@ namespace PANSearcher
         /// </summary>
         [Argument('x', "exclude", "Paths to exclude from search.")]
         private static string[]? ExcludedPaths { get; set; }
+
+        /// <summary>
+        ///     Text file extensions to search.
+        /// </summary>
+        [Argument('z', "zipfiles", "Zip file extensions to search.")]
+        private static string? ZipFileExtensions { get; set; }
+
         #endregion Arguments
 
         private const string reportsFolderName = "PANSearcherReports";
@@ -145,6 +152,11 @@ namespace PANSearcher
             if (TextFileExtensions != null)
             {
                 Settings.Instance.TextFileExtensions = TextFileExtensions;
+            }
+
+            if (!string.IsNullOrEmpty(ZipFileExtensions))
+            {
+                Settings.Instance.ZipFileExtensions = ZipFileExtensions.Split(',');
             }
 
             if (ExcludedPaths != null)
