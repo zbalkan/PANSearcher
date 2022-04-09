@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 
 namespace PANSearcher.Context
 {
@@ -15,7 +14,6 @@ namespace PANSearcher.Context
             catch (Exception e)
             {
                 Print.Verbose(e.Message);
-                Debug.WriteLine(e.Message);
             }
             return lines;
         }

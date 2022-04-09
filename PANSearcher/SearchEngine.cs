@@ -45,8 +45,9 @@ namespace PANSearcher
             var files = SearchFiles(searchBase, $"*{extension}");
 #pragma warning restore CS8604 // Possible null reference argument.
 
-            var report = GenerateSearchResultReport(context, files);
-            return report;
+            Print.Verbose($"Finished searching for files with '*{extension}' extensions");
+
+            return GenerateSearchResultReport(context, files);
         }
 
         /// <summary> 

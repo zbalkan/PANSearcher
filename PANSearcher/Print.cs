@@ -1,4 +1,6 @@
-﻿namespace PANSearcher
+﻿using System.Diagnostics;
+
+namespace PANSearcher
 {
     public static class Print
     {
@@ -18,6 +20,10 @@
             if (PrintMode == PrintMode.Verbose)
             {
                 Console.WriteLine(message);
+            }
+            else
+            {
+                Debug.WriteLine(message);
             }
         }
     }
