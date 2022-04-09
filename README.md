@@ -7,14 +7,14 @@ A command line application to search for PAN numbers in files. It is a hobby pro
 
 Although it is written from scratch, it is using directly (ripping off) some parts of PANHunt such as Regex patterns.
 
-**NB!** The current target is to run with with high performance and fast. Therefore, PANSearcher uses high CPU.
+**NB!** The current target is to get fast search results, causing to use high CPU. however, memory usage is relatively low.
 
 ## Installation
-Currently it is portable. Download the compressed file, extract it and run. 
+PANSearcher is portable. Download the compressed file, extract it and run. 
 
 There are two types of releases:
 
-**Standard:** Requires dotnet 6.0 installed.
+**Standard:** Requires dotnet 6.0 installed. Not a viable option for many.
 
 **Self contained:** Single-file executable with dotnet 6.0 and other dependencies included. Download and run.
 
@@ -27,14 +27,14 @@ usage: PANSearcher [ARGUMENTS]
 
 | Short | Long | Description | Default Value | Status |
 |-------|------|-------------|---------------|--------|
-| -a | --truncate | Truncate PANs in output | | IMPLEMENTED |
+| -a | --truncate | Truncate PANs in output (temporarily using 'a' shorthand) | | IMPLEMENTED |
 | -c | --config | configuration file to use | | IMPLEMENTED |
 | -h | --help | Show this help message and exit | | IMPLEMENTED |
 | -o | --outfile | Output file name for PAN report | `panhunt_YYYY-MM-DD-HHMMSS.txt` | IMPLEMENTED |
 | -q | --quiet | Quiet  | | IMPLEMENTED |
 | -s | --search | Base directory to search in | Windows: `C:\`, Others: `/` | IMPLEMENTED |
 | -t | --textfiles | Text file extensions to search | `.doc,.xls,.xml,.txt,.csv` | IMPLEMENTED |
-| -u | --unmask | Unmask PANs in output | | IMPLEMENTED |
+| -u | --unmask | Unmask PANs in output and report (Risky) | | IMPLEMENTED |
 | -v | --verbose | Verbose output. | | IMPLEMENTED |
 | -x | --exclude | Directories to exclude from the search | Windows: `C:\Windows,C:\Program Files,C:\Program Files (x86)`. Others: `/mnt` | IMPLEMENTED |
 | -e | --SPECIALFILES | Special file extensions to search | `.msg` | NOT IMPLEMENTED |
@@ -51,7 +51,7 @@ usage: PANSearcher [ARGUMENTS]
 - [x] Add Quiet option
 - [ ] Add report format option
 - [x] Add verbose option
-- [ ] Add WZip file, PST and MSG file reading capability
+- [ ] Add Zip file, PST and MSG file reading capability
 - [ ] Add advanced logging options such as json, syslog, event log formats pushing to a syslog server
 - [ ] Add email alerts
 - [ ] Use Spectre.Console for better UI experience
