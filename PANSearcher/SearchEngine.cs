@@ -18,6 +18,7 @@ namespace PANSearcher
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var tasks = new Task<Report>[extensions.Length];
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
+
             for (var i = 0; i < extensions.Length; i++)
             {
                 var extension = extensions[i];
@@ -47,7 +48,7 @@ namespace PANSearcher
 
             Print.Verbose($"Finished searching for files with '*{extension}' extensions");
 
-            return GenerateSearchResultReport(context, files);
+            return SearchInFiles(context, files);
         }
 
         /// <summary> 
@@ -100,7 +101,7 @@ namespace PANSearcher
             return false;
         }
 
-        private static Report GenerateSearchResultReport(IContext context, List<string> files)
+        private static Report SearchInFiles(IContext context, List<string> files)
         {
             var findings = new List<Finding>();
 
