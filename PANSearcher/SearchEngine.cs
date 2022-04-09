@@ -13,9 +13,7 @@ namespace PANSearcher
 
         public static Report Search(IContext context)
         {
-
-            var extensions = Settings.Instance.TextFileExtensions;
-            var report = new Report();
+            var extensions = Settings.Instance.FindExtensionsByContext(context);
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var tasks = new Task<Report>[extensions.Length];
@@ -27,6 +25,8 @@ namespace PANSearcher
                 tasks[i].Start();
             }
             _ = Task.WhenAll(tasks);
+
+            var report = new Report();
             for (var i = 0; i < tasks.Length; i++)
             {
                 var task = tasks[i];

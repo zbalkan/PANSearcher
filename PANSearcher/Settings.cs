@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using PANSearcher.Context;
 using SharpConfig;
 
 namespace PANSearcher
@@ -85,6 +86,16 @@ namespace PANSearcher
                 PANDisplayMode = PANDisplayMode.Masked;
             }
         }
+
+        public string[]? FindExtensionsByContext(IContext context) => context switch
+        {
+            TextFileContext => TextFileExtensions,
+            ZipFileContext => ZipFileExtensions,
+            MailFileContext => MailFileExtensions,
+            SpecialFileContext => SpecialFileExtensions,
+            OtherFileContext => OtherFileExtensions,
+            _ => null,
+        };
 
         private void Map()
         {
